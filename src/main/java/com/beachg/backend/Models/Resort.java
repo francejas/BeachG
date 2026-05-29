@@ -15,10 +15,13 @@ public class Resort {
         ///CHEQUEAR CLASE
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long idResort;
+        private Long id;
 
+        @Column(name = "resort_name", nullable = false)
         private String name;
-        private String ubication;
+
+        @Column(nullable = false)
+        private String location;
 
         @OneToMany(mappedBy = "service")
         private List<Service> servicesList;
