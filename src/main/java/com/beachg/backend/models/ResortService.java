@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "service")
+@Table(name = "services")
 public class ResortService {
 
     @Id
