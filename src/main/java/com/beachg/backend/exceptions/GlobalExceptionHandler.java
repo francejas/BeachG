@@ -7,8 +7,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception e) {
+    @ExceptionHandler(ResortInvalidRegisterException.class)
+    public ResponseEntity<String> handleResortInvalidRegisterException(ResortInvalidRegisterException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(ResortNotFoundException.class)
+    public ResponseEntity<String> handleResortNotFoundException(ResortNotFoundException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
