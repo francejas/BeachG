@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "resort")
+@Table(name = "Resorts")
 public class Resort {
         ///CHEQUEAR CLASE
         @Id
