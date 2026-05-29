@@ -1,4 +1,4 @@
-package com.beachg.backend.Controllers;
+package com.beachg.backend.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

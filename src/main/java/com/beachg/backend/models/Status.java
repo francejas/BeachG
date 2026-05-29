@@ -1,4 +1,4 @@
-package com.beachg.backend.Models;
+package com.beachg.backend.models;
 
 public enum Status {
     PENDING,
