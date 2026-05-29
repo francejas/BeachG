@@ -16,4 +16,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleResortNotFoundException(ResortNotFoundException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
+
+    @ExceptionHandler(InvalidAmenityException.class)
+    public ResponseEntity<String> handleInvalidAmenityException(InvalidAmenityException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(AmenityNotFoundException.class)
+    public ResponseEntity<String> handleAmenityNotFoundException(AmenityNotFoundException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
 }
