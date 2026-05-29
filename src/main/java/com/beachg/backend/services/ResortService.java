@@ -1,4 +1,4 @@
-package com.beachg.backend.models;
+package com.beachg.backend.services;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
