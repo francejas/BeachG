@@ -1,4 +1,4 @@
-package com.beachg.backend.Repositories;
+package com.beachg.backend.repositories;
 
 import com.beachg.backend.Models.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
