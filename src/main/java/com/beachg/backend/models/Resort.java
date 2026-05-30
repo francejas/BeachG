@@ -2,30 +2,33 @@ package com.beachg.backend.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.util.List;
 
 @Entity
 @Data
 public class Resort {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long idResort;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idResort;
 
-        private String name;
+    private String name;
 
-        private String location;
+    private String location;
 
-        @Column(unique = true)
-        private String adminEmail;
+    @Column(unique = true)
+    private String adminEmail;
 
-        private String passwordHash;
+    private String passwordHash;
 
-        private String coverPhotoUrl;
+    private String coverPhotoUrl;
 
-        @OneToMany(mappedBy = "resort")
-        private List<RentalUnit> rentalUnits;
+    @OneToMany(mappedBy = "resort")
+    private List<RentalUnit> rentalUnits;
 
-        @ManyToMany
-        private List<Amenity> amenities;
+    @ManyToMany
+    private List<Amenity> amenities;
+
+    private boolean isActive;
 }
