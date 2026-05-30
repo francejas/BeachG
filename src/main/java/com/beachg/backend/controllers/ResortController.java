@@ -1,8 +1,10 @@
 package com.beachg.backend.controllers;
 
-import com.beachg.backend.models.Resort;
-import com.beachg.backend.service.ResortService;
+import com.beachg.backend.dtos.ResortRequest;
+import com.beachg.backend.dtos.ResortResponse;
+import com.beachg.backend.services.ResortService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/resort")
+@RequestMapping("/api/resorts")
 @CrossOrigin("*")
 @RequiredArgsConstructor
 public class ResortController {
@@ -18,28 +20,28 @@ public class ResortController {
     private final ResortService resortService;
 
     @GetMapping
-    public ResponseEntity<List<Resort>> getResorts() {
+    public ResponseEntity<List<ResortResponse>> getResorts() {
         return ResponseEntity.ok(resortService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resort> getResortById(@PathVariable Long id) {
+    public ResponseEntity<ResortResponse> getResortById(@PathVariable Long id) {
         return ResponseEntity.ok(resortService.getResortById(id));
     }
 
     @PostMapping
-    public ResponseEntity<?> registerResort(@RequestBody Resort resort) {
-        Resort saved = resortService.registerResort(resort);
+    public ResponseEntity<?> registerResort(@RequestBody ResortRequest request) {
+        ResortResponse saved = resortService.registerResort(request);
 
-        return ResponseEntity.ok(Map.of(
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "message", "Resort has been successfully registered!",
                 "resort", saved
         ));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateResort(@PathVariable Long id, @RequestBody Resort resort) {
-        Resort saved = resortService.updateResort(id, resort);
+    public ResponseEntity<?> updateResort(@PathVariable Long id, @RequestBody ResortRequest request) {
+        ResortResponse saved = resortService.updateResort(id, request);
 
         return ResponseEntity.ok(Map.of(
                 "message", "Resort has been successfully updated!",
@@ -49,7 +51,7 @@ public class ResortController {
 
     @PutMapping("/{id}/inactive")
     public ResponseEntity<?> toInactiveResort(@PathVariable Long id) {
-        Resort saved = resortService.toInactive(id);
+        ResortResponse saved = resortService.toInactive(id);
 
         return ResponseEntity.ok(Map.of(
                 "message", "Resort has been successfully deactivated!",
@@ -59,13 +61,11 @@ public class ResortController {
 
     @PutMapping("/{id}/active")
     public ResponseEntity<?> toActiveResort(@PathVariable Long id) {
-        Resort saved = resortService.toActive(id);
+        ResortResponse saved = resortService.toActive(id);
 
         return ResponseEntity.ok(Map.of(
                 "message", "Resort has been successfully activated!",
                 "resort", saved
         ));
     }
-
-
 }

@@ -1,49 +1,46 @@
 package com.beachg.backend.controllers;
 
-import com.beachg.backend.models.Amenity;
+import com.beachg.backend.dtos.AmenityRequest;
+import com.beachg.backend.dtos.AmenityResponse;
 import com.beachg.backend.services.AmenityService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/amenities")
+@RequestMapping("/api/amenities")
+@CrossOrigin("*")
+@RequiredArgsConstructor
 public class AmenityController {
 
-    @Autowired
-    private AmenityService amenityService;
+    private final AmenityService amenityService;
 
     @GetMapping
-    public List<Amenity> getAllAmenities() {
-
-        return amenityService.getAllAmenities();
+    public ResponseEntity<List<AmenityResponse>> getAllAmenities() {
+        return ResponseEntity.ok(amenityService.getAllAmenities());
     }
 
     @GetMapping("/{id}")
-    public Amenity getAmenityById(@PathVariable Long id) {
-
-        return amenityService.getAmenityById(id);
+    public ResponseEntity<AmenityResponse> getAmenityById(@PathVariable Long id) {
+        return ResponseEntity.ok(amenityService.getAmenityById(id));
     }
 
     @PostMapping
-    public Amenity createAmenity(
-            @RequestBody Amenity amenity) {
-
-        return amenityService.createAmenity(amenity);
+    public ResponseEntity<AmenityResponse> createAmenity(@RequestBody AmenityRequest request) {
+        return new ResponseEntity<>(amenityService.createAmenity(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public Amenity updateAmenity(
-            @PathVariable Long id,
-            @RequestBody Amenity amenity) {
-
-        return amenityService.updateAmenity(id, amenity);
+    public ResponseEntity<AmenityResponse> updateAmenity(@PathVariable Long id, @RequestBody AmenityRequest request) {
+        return ResponseEntity.ok(amenityService.updateAmenity(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteAmenity(@PathVariable Long id) {
-
+    public ResponseEntity<Void> deleteAmenity(@PathVariable Long id) {
         amenityService.deleteAmenity(id);
+        return ResponseEntity.noContent().build();
     }
 }
