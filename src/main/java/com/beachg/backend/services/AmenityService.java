@@ -1,65 +1,68 @@
 package com.beachg.backend.services;
 
+import com.beachg.backend.dtos.AmenityRequest;
+import com.beachg.backend.dtos.AmenityResponse;
 import com.beachg.backend.exceptions.AmenityNotFoundException;
 import com.beachg.backend.exceptions.InvalidAmenityException;
 import com.beachg.backend.models.Amenity;
 import com.beachg.backend.repositories.AmenityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AmenityService {
 
-    @Autowired
-    private AmenityRepository amenityRepository;
+    private final AmenityRepository amenityRepository;
 
-    public List<Amenity> getAllAmenities() {
-        return amenityRepository.findAll();
+    public List<AmenityResponse> getAllAmenities() {
+        return amenityRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .toList(); //
     }
 
-    public Amenity getAmenityById(Long id) {
-
-        return amenityRepository.findById(id)
+    public AmenityResponse getAmenityById(Long id) {
+        Amenity amenity = amenityRepository.findById(id)
                 .orElseThrow(() -> new AmenityNotFoundException(id));
+        return mapToResponse(amenity);
     }
 
-    public Amenity createAmenity(Amenity amenity) {
+    public AmenityResponse createAmenity(AmenityRequest request) {
+        validateAmenity(request);
+        Amenity amenity = new Amenity();
+        amenity.setName(request.name());
 
-        validateAmenity(amenity);
-
-        return amenityRepository.save(amenity);
+        return mapToResponse(amenityRepository.save(amenity));
     }
 
-    public Amenity updateAmenity(Long id, Amenity amenity) {
-
-        validateAmenity(amenity);
-
+    public AmenityResponse updateAmenity(Long id, AmenityRequest request) {
+        validateAmenity(request);
         Amenity existingAmenity = amenityRepository.findById(id)
                 .orElseThrow(() -> new AmenityNotFoundException(id));
 
-        existingAmenity.setName(amenity.getName());
-
-        return amenityRepository.save(existingAmenity);
+        existingAmenity.setName(request.name());
+        return mapToResponse(amenityRepository.save(existingAmenity));
     }
 
     public void deleteAmenity(Long id) {
-
         Amenity amenity = amenityRepository.findById(id)
                 .orElseThrow(() -> new AmenityNotFoundException(id));
-
         amenityRepository.delete(amenity);
     }
 
-    private void validateAmenity(Amenity amenity) {
-
-        if (amenity.getName() == null || amenity.getName().trim().isEmpty()) {
+    private void validateAmenity(AmenityRequest request) {
+        if (request.name() == null || request.name().trim().isEmpty()) {
             throw new InvalidAmenityException("El nombre de la amenity no puede estar vacío");
         }
-
-        if (amenity.getName().length() < 3) {
+        if (request.name().length() < 3) {
             throw new InvalidAmenityException("El nombre debe tener al menos 3 caracteres");
         }
+    }
+
+    // MAPPER interno
+    private AmenityResponse mapToResponse(Amenity amenity) {
+        return new AmenityResponse(amenity.getIdAmenity(), amenity.getName());
     }
 }
