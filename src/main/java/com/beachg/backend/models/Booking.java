@@ -13,10 +13,11 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "booking")
+@Table(name = "Books")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "start_date", nullable = false)
@@ -31,7 +32,7 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = true)
     private LocalDateTime createdAt;
 
     @ManyToOne
