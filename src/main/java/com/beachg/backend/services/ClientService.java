@@ -68,7 +68,6 @@ public class ClientService {
                 client.getFirstName(),
                 client.getLastName(),
                 client.getEmail(),
-                client.getPasswordHash(),
                 client.getPhone(),
                 client.getBookings());
     }
