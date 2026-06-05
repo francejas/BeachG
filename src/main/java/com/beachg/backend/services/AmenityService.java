@@ -1,9 +1,9 @@
 package com.beachg.backend.services;
 
-import com.beachg.backend.dtos.AmenityRequest;
-import com.beachg.backend.dtos.AmenityResponse;
-import com.beachg.backend.exceptions.AmenityNotFoundException;
-import com.beachg.backend.exceptions.InvalidAmenityException;
+import com.beachg.backend.dtos.amenity.AmenityRequest;
+import com.beachg.backend.dtos.amenity.AmenityResponse;
+import com.beachg.backend.exceptions.amenity.AmenityNotFoundException;
+import com.beachg.backend.exceptions.amenity.InvalidAmenityException;
 import com.beachg.backend.models.Amenity;
 import com.beachg.backend.repositories.AmenityRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class AmenityService {
 
     public AmenityResponse getAmenityById(Long id) {
         Amenity amenity = amenityRepository.findById(id)
-                .orElseThrow(() -> new AmenityNotFoundException(id));
+                .orElseThrow(() -> new AmenityNotFoundException("Amenity con id " + id + " no encontrada"));
         return mapToResponse(amenity);
     }
 
@@ -40,7 +40,7 @@ public class AmenityService {
     public AmenityResponse updateAmenity(Long id, AmenityRequest request) {
         validateAmenity(request);
         Amenity existingAmenity = amenityRepository.findById(id)
-                .orElseThrow(() -> new AmenityNotFoundException(id));
+                .orElseThrow(() -> new AmenityNotFoundException("Amenity con id " + id + " no encontrada"));
 
         existingAmenity.setName(request.name());
         return mapToResponse(amenityRepository.save(existingAmenity));
@@ -48,7 +48,7 @@ public class AmenityService {
 
     public void deleteAmenity(Long id) {
         Amenity amenity = amenityRepository.findById(id)
-                .orElseThrow(() -> new AmenityNotFoundException(id));
+                .orElseThrow(() -> new AmenityNotFoundException("Amenity con id " + id + " no encontrada"));
         amenityRepository.delete(amenity);
     }
 

@@ -1,4 +1,4 @@
-package com.beachg.backend.dtos;
+package com.beachg.backend.dtos.resort;
 
 import java.util.List;
 

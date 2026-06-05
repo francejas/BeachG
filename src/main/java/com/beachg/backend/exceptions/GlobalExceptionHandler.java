@@ -1,5 +1,9 @@
 package com.beachg.backend.exceptions;
 
+import com.beachg.backend.exceptions.amenity.AmenityNotFoundException;
+import com.beachg.backend.exceptions.amenity.InvalidAmenityException;
+import com.beachg.backend.exceptions.resort.ResortInvalidRegisterException;
+import com.beachg.backend.exceptions.resort.ResortNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
