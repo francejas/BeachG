@@ -1,5 +1,7 @@
 package com.beachg.backend.dtos;
 
+import java.util.List;
+
 public record ClienteResponse(
         Long idClient,
         String firstName,
