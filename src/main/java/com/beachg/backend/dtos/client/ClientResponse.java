@@ -1,14 +1,16 @@
-package com.beachg.backend.dtos;
+package com.beachg.backend.dtos.client;
+
+import com.beachg.backend.models.Booking;
 
 import java.util.List;
 
-public record ClienteResponse(
+public record ClientResponse(
         Long idClient,
         String firstName,
         String lastName,
         String email,
         String password,
         String phone,
-        List<Long> bookingIds
+        List<Booking> bookingIds
 ) {
 }

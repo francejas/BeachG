@@ -1,5 +1,7 @@
 package com.beachg.backend.services;
 
+import com.beachg.backend.dtos.client.ClientRequest;
+import com.beachg.backend.dtos.client.ClientResponse;
 import com.beachg.backend.exceptions.client.ClientInvalidRegisterException;
 import com.beachg.backend.exceptions.client.ClientNotFoundException;
 import com.beachg.backend.models.Client;
