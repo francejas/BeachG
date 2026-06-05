@@ -1,6 +1,6 @@
-package com.beachg.backend.dtos;
+package com.beachg.backend.dtos.client;
 
-public record ClienteRequest(
+public record ClientRequest(
         String firstName,
         String lastName,
         String email,
