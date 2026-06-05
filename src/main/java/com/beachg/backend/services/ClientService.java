@@ -1,5 +1,6 @@
 package com.beachg.backend.services;
 
+import com.beachg.backend.dtos.booking.BookingSummaryResponse;
 import com.beachg.backend.dtos.client.ClientRequest;
 import com.beachg.backend.dtos.client.ClientResponse;
 import com.beachg.backend.exceptions.client.ClientInvalidRegisterException;
@@ -63,12 +64,28 @@ public class ClientService {
     }
 
     private ClientResponse mapToResponse(Client client) {
+
+        // 1. Transformamos la lista de entidades Booking a DTOs BookingSummaryResponse
+        List<BookingSummaryResponse> bookingSummaries = (client.getBookings() == null) ? List.of() :
+                client.getBookings().stream()
+                .map(b -> new BookingSummaryResponse(
+                        b.getId(),
+                        b.getStartDate(),
+                        b.getEndDate(),
+                        b.getTotalPrice(),
+                        b.getStatus().name(),
+                        b.getRentalUnit().getIdentifier()
+                ))
+                .toList();
+
+        // 2. Armamos la respuesta del cliente inyectándole la lista segura
         return new ClientResponse(
                 client.getIdClient(),
                 client.getFirstName(),
                 client.getLastName(),
                 client.getEmail(),
                 client.getPhone(),
-                client.getBookings());
+                bookingSummaries
+        );
     }
 }

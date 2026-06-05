@@ -1,5 +1,6 @@
 package com.beachg.backend.dtos.client;
 
+import com.beachg.backend.dtos.booking.BookingSummaryResponse;
 import com.beachg.backend.models.Booking;
 
 import java.util.List;
@@ -10,6 +11,6 @@ public record ClientResponse(
         String lastName,
         String email,
         String phone,
-        List<Booking> bookingIds
+        List<BookingSummaryResponse> bookings //lista anidada segura
 ) {
 }
