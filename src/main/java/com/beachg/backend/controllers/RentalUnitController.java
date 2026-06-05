@@ -1,7 +1,7 @@
 package com.beachg.backend.controllers;
 
-import com.beachg.backend.dtos.RentalUnitRequest;
-import com.beachg.backend.dtos.RentalUnitResponse;
+import com.beachg.backend.dtos.rentalunit.RentalUnitRequest;
+import com.beachg.backend.dtos.rentalunit.RentalUnitResponse;
 import com.beachg.backend.services.RentalUnitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
