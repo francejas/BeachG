@@ -8,6 +8,7 @@ public record ClienteResponse(
         String lastName,
         String email,
         String password,
-        String phone
+        String phone,
+        List<Long> bookingIds
 ) {
 }
