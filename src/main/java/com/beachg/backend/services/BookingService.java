@@ -10,4 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class BookingService {
+
+    private final BookingRepository bookingRepository;
+    private final ClientRepository clientRepository;
+    private final RentalUnitRepository rentalUnitRepository;
+    private final GuestRepository guestRepository;
+    
 }
