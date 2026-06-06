@@ -7,6 +7,9 @@ import com.beachg.backend.repositories.RentalUnitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
 @Service
 @RequiredArgsConstructor
 public class BookingService {
@@ -15,5 +18,15 @@ public class BookingService {
     private final ClientRepository clientRepository;
     private final RentalUnitRepository rentalUnitRepository;
     private final GuestRepository guestRepository;
-    
+
+    // ACLARACION: Cree 2 metodos, uno publico y otro privado, el publico para reutilizarlo
+    // en otra clase y el privado para esta, cosa que las responsabilidades esten bien separadas.
+    public double getCalculatedPrice(LocalDate start, LocalDate end, Double dailyPrice) {
+        return calculateTotalPrice(start, end, dailyPrice);
+    }
+
+    private double calculateTotalPrice(LocalDate start, LocalDate end, Double dailyPrice) {
+        long days = ChronoUnit.DAYS.between(start, end);
+        return days * dailyPrice;
+    }
 }
