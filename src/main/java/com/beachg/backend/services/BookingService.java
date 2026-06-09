@@ -109,4 +109,42 @@ public class BookingService {
         long days = ChronoUnit.DAYS.between(start, end);
         return days * dailyPrice;
     }
+
+
+    // 2. Obtener todas las reservas del sistema (Admin)
+    public List<BookingResponse> getAllBookings() {
+        return bookingRepository.findAll().stream()
+                .map(this::mapToBookingResponse)
+                .toList();
+    }
+
+    // 3. Obtener reservas por ID de Cliente (Cliente)
+    public List<BookingResponse> getBookingsByClientId(Long clientId) {
+        return bookingRepository.findByClientId(clientId).stream()
+                .map(this::mapToBookingResponse)
+                .toList();
+    }
+
+    // Método helper privado para mapear la entidad Booking al DTO BookingResponse
+    private BookingResponse mapToBookingResponse(Booking booking) {
+        List<GuestSummaryResponse> guestResponses = booking.getGuests() != null ?
+                booking.getGuests().stream()
+                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated()))
+                .toList() : new ArrayList<>();
+
+        return new BookingResponse(
+                booking.getId(),
+                booking.getStartDate(),
+                booking.getEndDate(),
+                booking.getTotalPrice(),
+                booking.getStatus(),
+                booking.getCreatedAt(),
+                booking.getClient().getIdClient(),
+                booking.getRentalUnit().getIdRentalUnit(),
+                guestResponses
+        );
+    }
+
+
+
 }

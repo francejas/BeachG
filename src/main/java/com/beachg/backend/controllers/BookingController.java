@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/bookings")
 @CrossOrigin("*")
@@ -16,9 +18,24 @@ public class BookingController {
 
     private final BookingService bookingService;
 
+    // 1. Crear una nueva reserva (POST)
     @PostMapping
     public ResponseEntity<BookingResponse> createBooking(@RequestBody BookingRequest request) {
-        return new ResponseEntity<>(bookingService.createBooking(request), HttpStatus.CREATED);
+        BookingResponse response = bookingService.createBooking(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    // 2. Ver todas las reservas (Para el Panel del Administrador)
+    @GetMapping
+    public ResponseEntity<List<BookingResponse>> getAllBookings() {
+        return ResponseEntity.ok(bookingService.getAllBookings());
+    }
+
+    // 3. Ver las reservas de un cliente específico (Para el Portal del Cliente)
+    @GetMapping("/client/{clientId}")
+    public ResponseEntity<List<BookingResponse>> getBookingsByClient(@PathVariable Long clientId) {
+        return ResponseEntity.ok(bookingService.getBookingsByClientId(clientId));
+    }
+
     
 }
