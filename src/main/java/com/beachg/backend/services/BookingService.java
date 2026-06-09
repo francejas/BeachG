@@ -1,6 +1,10 @@
 package com.beachg.backend.services;
 
-import com.beachg.backend.dtos.BookingRequest;
+// Import corregido a la carpeta correcta
+import com.beachg.backend.dtos.booking.BookingRequest;
+import com.beachg.backend.dtos.booking.BookingResponse;
+import com.beachg.backend.dtos.guest.GuestSummaryResponse;
+import com.beachg.backend.exceptions.booking.UnitNotAvailableException;
 import com.beachg.backend.models.*;
 import com.beachg.backend.repositories.BookingRepository;
 import com.beachg.backend.repositories.ClientRepository;
@@ -13,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +29,13 @@ public class BookingService {
     private final RentalUnitRepository rentalUnitRepository;
     private final GuestRepository guestRepository;
 
-    public Booking createBooking(BookingRequest request) {
+    // Cambio obligatorio: Debe retornar BookingResponse para que el controller funcione
+    public BookingResponse createBooking(BookingRequest request) {
+
+        // 1. Validar disponibilidad en la BD (Consulta personalizada)
+        if (!bookingRepository.isUnitAvailable(request.rentalUnitId(), request.startDate(), request.endDate())) {
+            throw new UnitNotAvailableException("La unidad seleccionada ya está ocupada en ese rango de fechas.");
+        }
 
         Client client = clientRepository.findById(request.clientId())
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
@@ -47,6 +59,7 @@ public class BookingService {
         Booking savedBooking = bookingRepository.save(booking);
 
         // CREACIÓN DE GUESTS
+        List<Guest> invitadosGuardados = new ArrayList<>();
 
         if (request.guestNames() != null && !request.guestNames().isEmpty()) {
 
@@ -62,11 +75,30 @@ public class BookingService {
 
                 guest.setBooking(savedBooking);
 
-                guestRepository.save(guest);
+                // Cambio obligatorio: Guardamos en una lista temporal para poder mostrarlos en el DTO
+                invitadosGuardados.add(guestRepository.save(guest));
             }
         }
 
-        return savedBooking;
+        // Cambio obligatorio: Mapeo de la respuesta final al DTO
+        List<GuestSummaryResponse> guestResponses = invitadosGuardados.stream()
+                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated()))
+                .toList();
+
+        return new BookingResponse(
+                savedBooking.getId(), // (O savedBooking.getId() si tu modelo se llama así)
+                savedBooking.getStartDate(),
+                savedBooking.getEndDate(),
+                savedBooking.getTotalPrice(),
+                savedBooking.getStatus(), // Sin el .name()
+                savedBooking.getCreatedAt(), // Fecha de creación
+                client.getIdClient(), // ID del cliente
+                rentalUnit.getIdRentalUnit(), // ID de la unidad
+                guestResponses // Lista de invitados
+        );
+    }
+
+
     // ACLARACION: Cree 2 metodos, uno publico y otro privado, el publico para reutilizarlo
     // en otra clase y el privado para esta, cosa que las responsabilidades esten bien separadas.
     public double getCalculatedPrice(LocalDate start, LocalDate end, Double dailyPrice) {
