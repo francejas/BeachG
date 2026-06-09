@@ -1,6 +1,6 @@
 package com.beachg.backend.services;
 
-import com.beachg.backend.dtos.BookingRequest;
+import com.beachg.backend.dtos.booking.BookingRequest;
 import com.beachg.backend.models.*;
 import com.beachg.backend.repositories.BookingRepository;
 import com.beachg.backend.repositories.ClientRepository;
@@ -67,6 +67,9 @@ public class BookingService {
         }
 
         return savedBooking;
+
+    }
+
     // ACLARACION: Cree 2 metodos, uno publico y otro privado, el publico para reutilizarlo
     // en otra clase y el privado para esta, cosa que las responsabilidades esten bien separadas.
     public double getCalculatedPrice(LocalDate start, LocalDate end, Double dailyPrice) {
