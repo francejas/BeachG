@@ -37,5 +37,11 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getBookingsByClientId(clientId));
     }
 
+    // 4. Ver el detalle de una reserva específica por su ID (GET /api/bookings/{id})
+    @GetMapping("/{id}")
+    public ResponseEntity<BookingResponse> getBookingById(@PathVariable Long id) {
+        return ResponseEntity.ok(bookingService.getBookingById(id));
+    }
+
     
 }

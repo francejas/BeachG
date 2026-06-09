@@ -125,6 +125,13 @@ public class BookingService {
                 .toList();
     }
 
+    // Obtener el detalle completo de una reserva específica por su ID
+    public BookingResponse getBookingById(Long id) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada con el ID: " + id));
+        return mapToBookingResponse(booking);
+    }
+
     // Método helper privado para mapear la entidad Booking al DTO BookingResponse
     private BookingResponse mapToBookingResponse(Booking booking) {
         List<GuestSummaryResponse> guestResponses = booking.getGuests() != null ?
