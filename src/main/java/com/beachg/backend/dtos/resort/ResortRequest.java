@@ -8,6 +8,6 @@ public record ResortRequest(
         String adminEmail,
         String password,
         String coverPhotoUrl,
-        List<Long> aminityIds
+        List<Long> amenityIds
 ) {
 }
