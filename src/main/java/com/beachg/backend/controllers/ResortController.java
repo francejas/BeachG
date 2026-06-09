@@ -1,7 +1,7 @@
 package com.beachg.backend.controllers;
 
-import com.beachg.backend.dtos.ResortRequest;
-import com.beachg.backend.dtos.ResortResponse;
+import com.beachg.backend.dtos.resort.ResortRequest;
+import com.beachg.backend.dtos.resort.ResortResponse;
 import com.beachg.backend.services.ResortService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

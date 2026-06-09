@@ -1,4 +1,7 @@
-package com.beachg.backend.dtos;
+package com.beachg.backend.dtos.resort;
+
+import com.beachg.backend.dtos.amenity.AmenityResponse;
+import com.beachg.backend.dtos.rentalunit.RentalUnitResponse;
 
 import java.util.List;
 

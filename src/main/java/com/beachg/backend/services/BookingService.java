@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +67,14 @@ public class BookingService {
         }
 
         return savedBooking;
+    // ACLARACION: Cree 2 metodos, uno publico y otro privado, el publico para reutilizarlo
+    // en otra clase y el privado para esta, cosa que las responsabilidades esten bien separadas.
+    public double getCalculatedPrice(LocalDate start, LocalDate end, Double dailyPrice) {
+        return calculateTotalPrice(start, end, dailyPrice);
+    }
+
+    private double calculateTotalPrice(LocalDate start, LocalDate end, Double dailyPrice) {
+        long days = ChronoUnit.DAYS.between(start, end);
+        return days * dailyPrice;
     }
 }
