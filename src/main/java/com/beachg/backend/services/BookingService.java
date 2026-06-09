@@ -86,7 +86,7 @@ public class BookingService {
                 .toList();
 
         return new BookingResponse(
-                savedBooking.getId(), // (O savedBooking.getId() si tu modelo se llama así)
+                savedBooking.getId(),
                 savedBooking.getStartDate(),
                 savedBooking.getEndDate(),
                 savedBooking.getTotalPrice(),
