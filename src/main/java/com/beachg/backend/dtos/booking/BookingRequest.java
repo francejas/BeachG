@@ -6,10 +6,11 @@ import java.util.List;
 public record BookingRequest(
         LocalDate startDate,
         LocalDate endDate,
-        Long clientId,
+        Long clientId, // En caso presencial será el ID del "Cliente Mostrador"
         Long rentalUnitId,
         List<String> guestNames,
         String walkInName, // <-- Nuevo campo opcional
-        String walkInDni   // <-- Nuevo campo opcional
+        String walkInDni,   // <-- Nuevo campo opcional
+        Boolean isWalkIn   // <--- NUEVO CAMPO QUE MANDA EL FRONTEND
 ) {
 }

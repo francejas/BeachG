@@ -21,12 +21,26 @@ public class BookingController {
     private final BookingService bookingService;
     private final MercadoPagoService mercadoPagoService; //  Inyectamos nuevo servicio
 
-    // 1. Crear una nueva reserva y generar link de pago
+    // 1. Crear una nueva reserva y generar link de pago (O confirmar directo si es presencial)
     @PostMapping
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest request) {
         // A. Creamos la reserva en tu BD
         BookingResponse booking = bookingService.createBooking(request);
 
+        // =======================================================
+        // INTERCEPCIÓN PARA RESERVAS PRESENCIALES (WALK-IN)
+        // =======================================================
+        if (request.isWalkIn() != null && request.isWalkIn()) {
+            // Si es en el mostrador, devolvemos el OK directo, sin link de pago.
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "message", "Reserva presencial confirmada correctamente. Código/s QR generados.",
+                    "booking", booking
+            ));
+        }
+
+        // =======================================================
+        // LÓGICA WEB NORMAL (MERCADO PAGO)
+        // =======================================================
         // B. Definimos tu URL pública de ngrok
         String baseUrl = "https://germicide-moistness-overhead.ngrok-free.dev";
 
