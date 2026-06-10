@@ -11,6 +11,7 @@ public class Guest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idGuest;
 
+    //cambiar a firstname y lastname
     private String fullName;
 
     @Column(unique = true)

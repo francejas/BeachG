@@ -11,7 +11,8 @@ public class RentalUnit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idRentalUnit;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private UnitType type;
 
     private String identifier;
 
