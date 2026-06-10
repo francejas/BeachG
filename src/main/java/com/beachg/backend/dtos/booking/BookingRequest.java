@@ -8,6 +8,8 @@ public record BookingRequest(
         LocalDate endDate,
         Long clientId,
         Long rentalUnitId,
-        List<String> guestNames
+        List<String> guestNames,
+        String walkInName, // <-- Nuevo campo opcional
+        String walkInDni   // <-- Nuevo campo opcional
 ) {
 }

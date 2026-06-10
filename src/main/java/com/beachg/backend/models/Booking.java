@@ -34,6 +34,14 @@ public class Booking {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    // --- NUEVOS CAMPOS PARA RESERVAS PRESENCIALES ---
+    @Column(name = "walk_in_name")
+    private String walkInName;
+
+    @Column(name = "walk_in_dni")
+    private String walkInDni;
+    // -----
+
     @ManyToOne
     @JoinColumn(name = "id_client")
     private Client client;
