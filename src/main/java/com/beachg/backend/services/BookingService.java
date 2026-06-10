@@ -50,7 +50,17 @@ public class BookingService {
         booking.setEndDate(request.endDate());
         booking.setClient(client);
         booking.setRentalUnit(rentalUnit);
-        booking.setStatus(Status.PENDING);
+
+        // =========================================================
+        // --- LÓGICA DE ESTADO SEGÚN TIPO DE RESERVA (WALK-IN) ---
+        // =========================================================
+        if (request.isWalkIn() != null && request.isWalkIn()) {
+            booking.setStatus(Status.CONFIRMED); // Presencial: ya pagó en caja
+        } else {
+            booking.setStatus(Status.PENDING); // Web: espera a Mercado Pago
+        }
+        // =========================================================
+
         booking.setCreatedAt(LocalDateTime.now());
 
         // --- ASIGNAR LOS DATOS DE MOSTRADOR ---
@@ -81,12 +91,12 @@ public class BookingService {
 
                 guest.setBooking(savedBooking);
 
-                // Cambio obligatorio: Guardamos en una lista temporal para poder mostrarlos en el DTO
+                // Guardamos en una lista temporal para poder mostrarlos en el DTO
                 invitadosGuardados.add(guestRepository.save(guest));
             }
         }
 
-        // Cambio obligatorio: Mapeo de la respuesta final al DTO
+        // Mapeo de la respuesta final al DTO
         List<GuestSummaryResponse> guestResponses = invitadosGuardados.stream()
                 .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated()))
                 .toList();
@@ -101,8 +111,8 @@ public class BookingService {
                 client.getIdClient(),
                 rentalUnit.getIdRentalUnit(),
                 guestResponses,
-                savedBooking.getWalkInName(), // <-- Agregado
-                savedBooking.getWalkInDni()   // <-- Agregado
+                savedBooking.getWalkInName(),
+                savedBooking.getWalkInDni()
         );
     }
 
