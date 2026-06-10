@@ -52,6 +52,11 @@ public class BookingService {
         booking.setStatus(Status.PENDING);
         booking.setCreatedAt(LocalDateTime.now());
 
+        // --- ASIGNAR LOS DATOS DE MOSTRADOR ---
+        booking.setWalkInName(request.walkInName());
+        booking.setWalkInDni(request.walkInDni());
+        // --------------------------------------
+
         long days = request.endDate().toEpochDay() - request.startDate().toEpochDay();
 
         booking.setTotalPrice(days * rentalUnit.getDailyPrice());
@@ -90,11 +95,13 @@ public class BookingService {
                 savedBooking.getStartDate(),
                 savedBooking.getEndDate(),
                 savedBooking.getTotalPrice(),
-                savedBooking.getStatus(), // Sin el .name()
-                savedBooking.getCreatedAt(), // Fecha de creación
-                client.getIdClient(), // ID del cliente
-                rentalUnit.getIdRentalUnit(), // ID de la unidad
-                guestResponses // Lista de invitados
+                savedBooking.getStatus(),
+                savedBooking.getCreatedAt(),
+                client.getIdClient(),
+                rentalUnit.getIdRentalUnit(),
+                guestResponses,
+                savedBooking.getWalkInName(), // <-- Agregado
+                savedBooking.getWalkInDni()   // <-- Agregado
         );
     }
 
@@ -148,7 +155,9 @@ public class BookingService {
                 booking.getCreatedAt(),
                 booking.getClient().getIdClient(),
                 booking.getRentalUnit().getIdRentalUnit(),
-                guestResponses
+                guestResponses,
+                booking.getWalkInName(), // <-- Agregado
+                booking.getWalkInDni()   // <-- Agregado
         );
     }
 

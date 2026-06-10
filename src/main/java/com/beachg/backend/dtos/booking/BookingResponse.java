@@ -16,6 +16,8 @@ public record BookingResponse(
         LocalDateTime createdAt,
         Long idClient,
         Long rentalUnitId,
-        List<GuestSummaryResponse> guests
+        List<GuestSummaryResponse> guests,
+        String walkInName, // <-- Nuevo campo
+        String walkInDni   // <-- Nuevo campo
 ) {
 }
