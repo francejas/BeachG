@@ -11,6 +11,7 @@ import com.beachg.backend.repositories.ClientRepository;
 import com.beachg.backend.repositories.GuestRepository;
 import com.beachg.backend.repositories.RentalUnitRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -159,6 +160,46 @@ public class BookingService {
                 booking.getWalkInName(), // <-- Agregado
                 booking.getWalkInDni()   // <-- Agregado
         );
+    }
+
+    public void confirmBookingPayment(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+
+        booking.setStatus(Status.CONFIRMED);
+
+        // Guardamos los cambios
+        bookingRepository.save(booking);
+    }
+
+
+    // ==========================================
+    // TAREA AUTOMÁTICA DE LIMPIEZA DE RESERVAS
+    // ==========================================
+
+    /**
+     * Este método se ejecuta automáticamente cada 1 hora exacto.
+     * Busca las reservas con más de 24hs pendientes y las cancela.
+     */
+    @Scheduled(cron = "0 0 * * * *")
+    public void cancelExpiredBookings() {
+        // 1. Calculamos qué hora era hace exactamente 24 horas
+        LocalDateTime twentyFourHoursAgo = LocalDateTime.now().minusHours(24);
+
+        // 2. Buscamos las reservas vencidas usando el método nuevo del repositorio
+        List<Booking> expiredBookings = bookingRepository.findExpiredPendingBookings(twentyFourHoursAgo);
+
+        // 3. Si encontramos alguna, le cambiamos el estado a CANCELED y la guardamos
+        if (!expiredBookings.isEmpty()) {
+            for (Booking booking : expiredBookings) {
+                booking.setStatus(Status.CANCELED); // Usa el Status de tu Enum
+            }
+
+            // saveAll es mucho más rápido que hacer un save() por cada reserva en un bucle
+            bookingRepository.saveAll(expiredBookings);
+
+            System.out.println("Limpieza automática: Se cancelaron " + expiredBookings.size() + " reservas por falta de pago.");
+        }
     }
 
 
