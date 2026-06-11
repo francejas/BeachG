@@ -117,8 +117,8 @@ public class BookingService {
     }
 
 
-    // ACLARACION: Cree 2 metodos, uno publico y otro privado, el publico para reutilizarlo
-    // en otra clase y el privado para esta, cosa que las responsabilidades esten bien separadas.
+    // ACLARACION: El private es para esta clase, el public es para usarlo en
+    // cualquier parte del proyecto si llegara a ser necesario.
     public double getCalculatedPrice(LocalDate start, LocalDate end, Double dailyPrice) {
         return calculateTotalPrice(start, end, dailyPrice);
     }
