@@ -8,6 +8,7 @@ import com.beachg.backend.exceptions.client.ClientNotFoundException;
 import com.beachg.backend.models.Client;
 import com.beachg.backend.repositories.ClientRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ClientService {
 
     private final ClientRepository clientRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<ClientResponse> getAll() {
         return clientRepository.findAll()
@@ -29,7 +31,7 @@ public class ClientService {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ClientNotFoundException("Client with id " + id + " not found"));
 
-        return mapToResponse(clientRepository.save(client));
+        return mapToResponse(client);
     }
 
     public ClientResponse registerClient(ClientRequest request) {
@@ -41,7 +43,7 @@ public class ClientService {
         client.setFirstName(request.firstName());
         client.setLastName(request.lastName());
         client.setEmail(request.email());
-        client.setPasswordHash(request.password());
+        client.setPasswordHash(passwordEncoder.encode(request.password()));
         client.setPhone(request.phone());
 
         // TODO: Fijarse lista de reservas (bookings) como setearla. Default: null
@@ -57,7 +59,7 @@ public class ClientService {
         saved.setFirstName(request.firstName());
         saved.setLastName(request.lastName());
         saved.setEmail(request.email());
-        saved.setPasswordHash(request.password());
+        saved.setPasswordHash(passwordEncoder.encode(request.password()));
         saved.setPhone(request.phone());
 
         return mapToResponse(clientRepository.save(saved));
@@ -65,7 +67,6 @@ public class ClientService {
 
     private ClientResponse mapToResponse(Client client) {
 
-        // 1. Transformamos la lista de entidades Booking a DTOs BookingSummaryResponse
         List<BookingSummaryResponse> bookingSummaries = (client.getBookings() == null) ? List.of() :
                 client.getBookings().stream()
                 .map(b -> new BookingSummaryResponse(
@@ -78,7 +79,6 @@ public class ClientService {
                 ))
                 .toList();
 
-        // 2. Armamos la respuesta del cliente inyectándole la lista segura
         return new ClientResponse(
                 client.getIdClient(),
                 client.getFirstName(),
