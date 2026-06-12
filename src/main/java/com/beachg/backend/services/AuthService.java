@@ -6,7 +6,10 @@ import com.beachg.backend.exceptions.auth.InvalidCredentialsException;
 import com.beachg.backend.exceptions.client.ClientNotFoundException;
 import com.beachg.backend.models.Client;
 import com.beachg.backend.repositories.ClientRepository;
+import com.beachg.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,7 @@ public class AuthService {
 
     private final ClientRepository clientRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public AuthResponse login(AuthRequest request) {
         Client client = clientRepository.findByEmail(request.email())
@@ -25,8 +29,13 @@ public class AuthService {
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
-        // TODO: llamar a JwtUtil para generar el token y retornarlo en AuthResponse
-        // (Reemplazar el "token-pendiente" por el metodo de JwtUtil).
-        return new AuthResponse("token-pendiente", client.getIdClient());
+        UserDetails userDetails = User.withUsername(client.getEmail())
+                .password(client.getPasswordHash())
+                .roles("USER")
+                .build();
+
+        String token = jwtUtil.generateToken(userDetails);
+
+        return new AuthResponse(token, client.getIdClient());
     }
 }
