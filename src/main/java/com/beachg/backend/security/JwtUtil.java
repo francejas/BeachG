@@ -43,8 +43,8 @@ public class JwtUtil {
         return Jwts.parser()
                 .verifyWith(getKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     private Key getKey() {
