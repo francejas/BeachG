@@ -1,4 +1,4 @@
-package com.beachg.backend.dtos;
+package com.beachg.backend.dtos.resort;
 
 import java.util.List;
 
@@ -8,6 +8,6 @@ public record ResortRequest(
         String adminEmail,
         String password,
         String coverPhotoUrl,
-        List<Long> aminityIds
+        List<Long> amenityIds
 ) {
 }

@@ -1,7 +1,7 @@
 package com.beachg.backend.services;
 
-import com.beachg.backend.dtos.RentalUnitRequest;
-import com.beachg.backend.dtos.RentalUnitResponse;
+import com.beachg.backend.dtos.rentalunit.RentalUnitRequest;
+import com.beachg.backend.dtos.rentalunit.RentalUnitResponse;
 import com.beachg.backend.models.RentalUnit;
 import com.beachg.backend.models.Resort;
 import com.beachg.backend.repositories.RentalUnitRepository;

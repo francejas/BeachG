@@ -1,8 +1,8 @@
-package com.beachg.backend.dtos;
-
+package com.beachg.backend.dtos.rentalunit;
+import com.beachg.backend.models.UnitType;
 public record RentalUnitResponse(
         Long idRentalUnit,
-        String type,
+        UnitType type,
         String identifier,
         Double dailyPrice,
         Boolean isBlocked

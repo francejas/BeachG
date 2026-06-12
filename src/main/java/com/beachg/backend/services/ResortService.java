@@ -1,11 +1,11 @@
 package com.beachg.backend.services;
 
-import com.beachg.backend.dtos.AmenityResponse;
-import com.beachg.backend.dtos.RentalUnitResponse;
-import com.beachg.backend.dtos.ResortRequest;
-import com.beachg.backend.dtos.ResortResponse;
-import com.beachg.backend.exceptions.ResortInvalidRegisterException;
-import com.beachg.backend.exceptions.ResortNotFoundException;
+import com.beachg.backend.dtos.amenity.AmenityResponse;
+import com.beachg.backend.dtos.rentalunit.RentalUnitResponse;
+import com.beachg.backend.dtos.resort.ResortRequest;
+import com.beachg.backend.dtos.resort.ResortResponse;
+import com.beachg.backend.exceptions.resort.ResortInvalidRegisterException;
+import com.beachg.backend.exceptions.resort.ResortNotFoundException;
 import com.beachg.backend.models.Amenity;
 import com.beachg.backend.models.Resort;
 import com.beachg.backend.repositories.AmenityRepository;
@@ -31,6 +31,7 @@ public class ResortService {
     public ResortResponse getResortById(Long id) {
         Resort resort = resortRepository.findById(id)
                 .orElseThrow(() -> new ResortNotFoundException("Resort with id " + id + " not found"));
+
         return mapToResponse(resort);
     }
 
@@ -47,9 +48,9 @@ public class ResortService {
         resort.setCoverPhotoUrl(request.coverPhotoUrl());
         resort.setActive(true);
 
-        // Buscar y asignar amenities si enviaron la lista de IDs (notar que usamos request.aminityIds())
-        if (request.aminityIds() != null && !request.aminityIds().isEmpty()) {
-            List<Amenity> amenities = amenityRepository.findAllById(request.aminityIds());
+        // Buscar y asignar amenities si enviaron la lista de IDs (notar que usamos request.amenityIds())
+        if (request.amenityIds() != null && !request.amenityIds().isEmpty()) {
+            List<Amenity> amenities = amenityRepository.findAllById(request.amenityIds());
             resort.setAmenities(amenities);
         }
 
@@ -65,8 +66,8 @@ public class ResortService {
         resort.setAdminEmail(request.adminEmail());
         resort.setCoverPhotoUrl(request.coverPhotoUrl());
 
-        if (request.aminityIds() != null) {
-            List<Amenity> amenities = amenityRepository.findAllById(request.aminityIds());
+        if (request.amenityIds() != null) {
+            List<Amenity> amenities = amenityRepository.findAllById(request.amenityIds());
             resort.setAmenities(amenities);
         }
 

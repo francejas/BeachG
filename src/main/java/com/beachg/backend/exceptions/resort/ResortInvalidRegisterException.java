@@ -1,4 +1,4 @@
-package com.beachg.backend.exceptions;
+package com.beachg.backend.exceptions.resort;
 
 public class ResortInvalidRegisterException extends RuntimeException {
     public ResortInvalidRegisterException(String message) {

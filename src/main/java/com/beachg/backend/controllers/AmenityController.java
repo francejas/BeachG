@@ -1,7 +1,7 @@
 package com.beachg.backend.controllers;
 
-import com.beachg.backend.dtos.AmenityRequest;
-import com.beachg.backend.dtos.AmenityResponse;
+import com.beachg.backend.dtos.amenity.AmenityRequest;
+import com.beachg.backend.dtos.amenity.AmenityResponse;
 import com.beachg.backend.services.AmenityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
