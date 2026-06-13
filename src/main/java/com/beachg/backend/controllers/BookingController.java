@@ -5,6 +5,7 @@ import com.beachg.backend.dtos.booking.BookingResponse;
 import com.beachg.backend.services.BookingService;
 import com.beachg.backend.services.MercadoPagoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,9 @@ public class BookingController {
 
     private final BookingService bookingService;
     private final MercadoPagoService mercadoPagoService; //  Inyectamos nuevo servicio
+
+    @Value("${NGROK_BASE_URL}")
+    private String baseUrl;
 
     // 1. Crear una nueva reserva y generar link de pago (O confirmar directo si es presencial)
     @PostMapping
@@ -41,8 +45,6 @@ public class BookingController {
         // =======================================================
         // LÓGICA WEB NORMAL (MERCADO PAGO)
         // =======================================================
-        // B. Definimos tu URL pública de ngrok
-        String baseUrl = "https://germicide-moistness-overhead.ngrok-free.dev";
 
         // C. Generamos el link de pago pasándole las URLs y el ID de la reserva
         String paymentUrl = mercadoPagoService.createPaymentPreference(
