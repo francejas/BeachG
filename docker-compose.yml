@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # SERVICIO 1: La Base de Datos MySQL
+  # ==========================================
+  db:
+    image: mysql:8.0
+    container_name: beachg-mysql
+    environment:
+      MYSQL_DATABASE: beachg_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      # Exponemos el puerto 3307 en tu compu para que no choque con tu MySQL local
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # ==========================================
+  # SERVICIO 2: Tu Backend Spring Boot
+  # ==========================================
+  backend:
+    build: . # Le dice que cocine el Dockerfile que creamos antes
+    container_name: beachg-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      # Magia de Spring Boot: Estas variables pisan a tu application.properties
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/beachg_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      # Le pasamos el token de Mercado Pago desde tu archivo .env
+      MP_ACCESS_TOKEN: ${MP_ACCESS_TOKEN}
+
+volumes:
+  # Esto guarda la info para que las reservas no se borren si apagás la compu
+  db_data:
