@@ -55,9 +55,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas públicas: login, registro de cliente, validación QR, callbacks de Mercado Pago
+                        // Swagger / OpenAPI
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        // Rutas públicas
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/clients").permitAll()  // auto-registro web
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/clients").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/resorts", "/api/resorts/*").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/amenities", "/api/amenities/*").permitAll()
                         .requestMatchers("/api/guests/validate/**").permitAll()
                         .requestMatchers("/api/bookings/success", "/api/bookings/pending", "/api/bookings/failure").permitAll()
                         .anyRequest().authenticated()
@@ -72,7 +76,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "ngrok-skip-browser-warning"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

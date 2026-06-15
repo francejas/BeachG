@@ -17,7 +17,11 @@ public record BookingResponse(
         Long idClient,
         Long rentalUnitId,
         List<GuestSummaryResponse> guests,
-        String walkInName, // <-- Nuevo campo
-        String walkInDni   // <-- Nuevo campo
+        String walkInName,
+        String walkInDni,
+        Long resortId,
+        String resortName,
+        String resortLocation,
+        String resortCoverPhotoUrl
 ) {
 }
