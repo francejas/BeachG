@@ -74,6 +74,27 @@ public class ResortService {
         return mapToResponse(resortRepository.save(resort));
     }
 
+    public ResortResponse getMyResort(String adminEmail) {
+        return mapToResponse(resortRepository.findByAdminEmail(adminEmail)
+                .orElseThrow(() -> new ResortNotFoundException("No resort found for this admin")));
+    }
+
+    public ResortResponse updateMyResort(String adminEmail, ResortRequest request) {
+        Resort resort = resortRepository.findByAdminEmail(adminEmail)
+                .orElseThrow(() -> new ResortNotFoundException("No resort found for this admin"));
+
+        resort.setName(request.name());
+        resort.setLocation(request.location());
+        resort.setCoverPhotoUrl(request.coverPhotoUrl());
+
+        if (request.amenityIds() != null) {
+            List<Amenity> amenities = amenityRepository.findAllById(request.amenityIds());
+            resort.setAmenities(amenities);
+        }
+
+        return mapToResponse(resortRepository.save(resort));
+    }
+
     public ResortResponse toInactive(Long id) {
         Resort resort = resortRepository.findById(id).orElseThrow(() -> new ResortNotFoundException("Resort not found"));
         resort.setActive(false);

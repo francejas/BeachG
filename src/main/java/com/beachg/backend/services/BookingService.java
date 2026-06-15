@@ -54,15 +54,7 @@ public class BookingService {
         booking.setClient(client);
         booking.setRentalUnit(rentalUnit);
 
-        // =========================================================
-        // --- LÓGICA DE ESTADO SEGÚN TIPO DE RESERVA (WALK-IN) ---
-        // =========================================================
-        if (request.isWalkIn() != null && request.isWalkIn()) {
-            booking.setStatus(Status.CONFIRMED); // Presencial: ya pagó en caja
-        } else {
-            booking.setStatus(Status.PENDING); // Web: espera a Mercado Pago
-        }
-        // =========================================================
+        booking.setStatus(Status.PENDING); // Siempre PENDING — el controller walk-in llama confirmBookingPayment
 
         booking.setCreatedAt(LocalDateTime.now());
 
@@ -99,7 +91,7 @@ public class BookingService {
 
         // Mapeo de la respuesta final al DTO
         List<GuestSummaryResponse> guestResponses = invitadosGuardados.stream()
-                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated()))
+                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated(), g.getQrToken()))
                 .toList();
 
         return new BookingResponse(
@@ -155,7 +147,7 @@ public class BookingService {
     private BookingResponse mapToBookingResponse(Booking booking) {
         List<GuestSummaryResponse> guestResponses = booking.getGuests() != null ?
                 booking.getGuests().stream()
-                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated()))
+                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated(), g.getQrToken()))
                 .toList() : new ArrayList<>();
 
         return new BookingResponse(

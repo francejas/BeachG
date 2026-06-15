@@ -6,6 +6,8 @@ import com.beachg.backend.services.ResortService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +30,25 @@ public class ResortController {
         return ResponseEntity.ok(resortService.getResortById(id));
     }
 
+    // El admin obtiene los datos de SU resort usando el email del JWT
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/my")
+    public ResponseEntity<ResortResponse> getMyResort(Authentication auth) {
+        return ResponseEntity.ok(resortService.getMyResort(auth.getName()));
+    }
+
+    // El admin actualiza SU resort — no necesita saber el ID
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/my")
+    public ResponseEntity<?> updateMyResort(Authentication auth, @RequestBody ResortRequest request) {
+        ResortResponse saved = resortService.updateMyResort(auth.getName(), request);
+        return ResponseEntity.ok(Map.of(
+                "message", "Resort actualizado correctamente.",
+                "resort", saved
+        ));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> registerResort(@RequestBody ResortRequest request) {
         ResortResponse saved = resortService.registerResort(request);
@@ -38,6 +59,7 @@ public class ResortController {
         ));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateResort(@PathVariable Long id, @RequestBody ResortRequest request) {
         ResortResponse saved = resortService.updateResort(id, request);
@@ -48,6 +70,7 @@ public class ResortController {
         ));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/inactive")
     public ResponseEntity<?> toInactiveResort(@PathVariable Long id) {
         ResortResponse saved = resortService.toInactive(id);
@@ -58,6 +81,7 @@ public class ResortController {
         ));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/active")
     public ResponseEntity<?> toActiveResort(@PathVariable Long id) {
         ResortResponse saved = resortService.toActive(id);

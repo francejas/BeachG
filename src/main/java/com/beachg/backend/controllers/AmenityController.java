@@ -6,6 +6,7 @@ import com.beachg.backend.services.AmenityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,16 +28,19 @@ public class AmenityController {
         return ResponseEntity.ok(amenityService.getAmenityById(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<AmenityResponse> createAmenity(@RequestBody AmenityRequest request) {
         return new ResponseEntity<>(amenityService.createAmenity(request), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<AmenityResponse> updateAmenity(@PathVariable Long id, @RequestBody AmenityRequest request) {
         return ResponseEntity.ok(amenityService.updateAmenity(id, request));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAmenity(@PathVariable Long id) {
         amenityService.deleteAmenity(id);

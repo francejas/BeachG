@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface ResortRepository extends JpaRepository<Resort,Long> {
     Optional<Resort> findByName(String name);
+    Optional<Resort> findByAdminEmail(String adminEmail);
 }
 
