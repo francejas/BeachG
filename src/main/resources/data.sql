@@ -1,27 +1,30 @@
 -- ==========================================
 -- 1. CARGA DE CLIENTES
 -- ==========================================
--- ID 1: "Cliente Mostrador" para las ventas presenciales (Walk-in)
--- IDs 2 al 10: Clientes de prueba para usar en Postman
-INSERT IGNORE INTO client (id_client, first_name, last_name, email, phone, password_hash) VALUES
-(1, 'Cliente', 'Mostrador', 'mostrador@beachg.com', '0000000000', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
-(2, 'Xavier', 'Cejas', 'xavier@correo.com', '2234567890', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
-(3, 'Francisco', 'Cejas', 'francisco@correo.com', '2231112233', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
-(4, 'Marta', 'Gomez', 'marta.gomez@correo.com', '1122334455', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
-(5, 'Carlos', 'Lopez', 'carlos.l@correo.com', '1144556677', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
-(6, 'Agustina', 'Rios', 'agus.rios@correo.com', '2239998877', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
-(7, 'Juan', 'Perez', 'juanperez@correo.com', '1133221100', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
-(8, 'Lucia', 'Fernandez', 'lucia.f@correo.com', '2235554433', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
-(9, 'Roberto', 'Sosa', 'roberto.s@correo.com', '1188776655', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
-(10, 'Jimena', 'Diaz', 'jime.diaz@correo.com', '2234445566', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a');
+-- ID 1: "Cliente Mostrador" — cuenta universal para reservas presenciales (Walk-in)
+--        Todas las reservas walk-in se crean con clientId=1.
+-- IDs 2 al 10: Clientes de prueba
+INSERT IGNORE INTO client (id_client, first_name, last_name, email, phone, password_hash, role) VALUES
+(1,  'Cliente',   'Mostrador', 'mostrador@beachg.com',   '0000000000', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'USER'),
+(2,  'Xavier',    'Cejas',     'xavier@correo.com',       '2234567890', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'USER'),
+(3,  'Francisco', 'Cejas',     'francisco@correo.com',    '2231112233', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'USER'),
+(4,  'Marta',     'Gomez',     'marta.gomez@correo.com',  '1122334455', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'USER'),
+(5,  'Carlos',    'Lopez',     'carlos.l@correo.com',     '1144556677', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'USER'),
+(6,  'Agustina',  'Rios',      'agus.rios@correo.com',    '2239998877', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'USER'),
+(7,  'Juan',      'Perez',     'juanperez@correo.com',    '1133221100', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'USER'),
+(8,  'Lucia',     'Fernandez', 'lucia.f@correo.com',      '2235554433', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'USER'),
+(9,  'Roberto',   'Sosa',      'roberto.s@correo.com',    '1188776655', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'USER'),
+(10, 'Jimena',    'Diaz',      'jime.diaz@correo.com',    '2234445566', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'USER'),
+-- ID 11: Admin del balneario — credenciales creadas por el equipo, role ADMIN
+(11, 'Admin',     'BeachG',    'admin@beachg.com',        '0000000001', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'ADMIN');
 
 -- ==========================================
 -- 2. CARGA DE BALNEARIOS (RESORTS)
 -- ==========================================
 -- Tenemos dos balnearios para probar si los filtros por balneario funcionan bien
 INSERT IGNORE INTO resort (id_resort, name, location, admin_email, password_hash, cover_photo_url, is_active) VALUES
-(1, 'BeachG Club de Playa', 'Mar del Plata, Buenos Aires', 'admin@beachg.com', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a', 'https://imagenes.com/playa-mdp.jpg', true),
-(2, 'Ocean View', 'Pinamar, Buenos Aires', 'admin@oceanview.com', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a', 'https://imagenes.com/playa-pinamar.jpg', true);
+(1, 'BeachG Club de Playa', 'Mar del Plata, Buenos Aires', 'admin@beachg.com', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'https://imagenes.com/playa-mdp.jpg', true),
+(2, 'Ocean View', 'Pinamar, Buenos Aires', 'admin@oceanview.com', '$2a$10$2l7WCtz4nBzuYo24lXiC9O0ko4sEVfFznKoynnuxqFbzwzxamOu3q', 'https://imagenes.com/playa-pinamar.jpg', true);
 
 -- ==========================================
 -- 3. CARGA DE AMENITIES (SERVICIOS)

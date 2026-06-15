@@ -3,6 +3,7 @@ package com.beachg.backend.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "clave-super-secreta-para-firmar-los-jwt-segura-y-larga";
+    @Value("${JWT_SECRET}")
+    private String secretKey;
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
@@ -48,7 +50,7 @@ public class JwtUtil {
     }
 
     private SecretKey getKey() {
-        byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +16,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookings")
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class BookingController {
 
@@ -25,28 +25,11 @@ public class BookingController {
     @Value("${NGROK_BASE_URL}")
     private String baseUrl;
 
-    // 1. Crear una nueva reserva y generar link de pago (O confirmar directo si es presencial)
+    // 1a. Reserva WEB — cualquier usuario autenticado
     @PostMapping
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest request) {
-        // A. Creamos la reserva en tu BD
         BookingResponse booking = bookingService.createBooking(request);
 
-        // =======================================================
-        // INTERCEPCIÓN PARA RESERVAS PRESENCIALES (WALK-IN)
-        // =======================================================
-        if (request.isWalkIn() != null && request.isWalkIn()) {
-            // Si es en el mostrador, devolvemos el OK directo, sin link de pago.
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "message", "Reserva presencial confirmada correctamente. Código/s QR generados.",
-                    "booking", booking
-            ));
-        }
-
-        // =======================================================
-        // LÓGICA WEB NORMAL (MERCADO PAGO)
-        // =======================================================
-
-        // C. Generamos el link de pago pasándole las URLs y el ID de la reserva
         String paymentUrl = mercadoPagoService.createPaymentPreference(
                 "Reserva BeachG",
                 booking.totalPrice(),
@@ -54,13 +37,25 @@ public class BookingController {
                 baseUrl + "/api/bookings/success",
                 baseUrl + "/api/bookings/pending",
                 baseUrl + "/api/bookings/failure",
-                booking.id() // <--- ACÁ LE PASAMOS EL ID AL SERVICIO
+                booking.id()
         );
 
-        // D. Devolvemos un objeto que contiene tanto los datos de la reserva como el link de Mercado Pago
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "booking", booking,
                 "paymentUrl", paymentUrl
+        ));
+    }
+
+    // 1b. Reserva PRESENCIAL (walk-in) — solo ADMIN del balneario
+    @PostMapping("/walkin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> createWalkInBooking(@RequestBody BookingRequest request) {
+        BookingResponse booking = bookingService.createBooking(request);
+        bookingService.confirmBookingPayment(booking.id()); // presencial = pagó en caja
+        BookingResponse confirmed = bookingService.getBookingById(booking.id());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "message", "Reserva presencial confirmada. Código/s QR generados.",
+                "booking", confirmed
         ));
     }
 
