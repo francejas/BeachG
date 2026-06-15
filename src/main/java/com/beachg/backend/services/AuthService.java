@@ -23,10 +23,10 @@ public class AuthService {
 
     public AuthResponse login(AuthRequest request) {
         Client client = clientRepository.findByEmail(request.email())
-                .orElseThrow(() -> new ClientNotFoundException("Client not found"));
+                .orElseThrow(() -> new ClientNotFoundException("No existe una cuenta con ese email."));
 
         if (!passwordEncoder.matches(request.password(), client.getPasswordHash())) {
-            throw new InvalidCredentialsException("Invalid credentials");
+            throw new InvalidCredentialsException("Contraseña incorrecta.");
         }
 
         UserDetails userDetails = User.withUsername(client.getEmail())

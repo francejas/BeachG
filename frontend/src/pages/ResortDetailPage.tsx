@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { ArrowLeft, ExternalLink, MapPin, Tent, Umbrella } from "lucide-react"
 import { useResort } from "@/lib/queries"
@@ -35,13 +35,13 @@ export function ResortDetailPage() {
   const selectedUnit = available.find((u) => u.idRentalUnit === selectedUnitId)
 
   function handleReserve() {
+    if (selectedUnit) {
+      sessionStorage.setItem(
+        `beachg_unit_${resort!.idResort}`,
+        JSON.stringify({ unitId: selectedUnit.idRentalUnit, type: selectedUnit.type }),
+      )
+    }
     if (!isAuthenticated) {
-      if (selectedUnit) {
-        sessionStorage.setItem(
-          `beachg_unit_${resort!.idResort}`,
-          JSON.stringify({ unitId: selectedUnit.idRentalUnit, type: selectedUnit.type }),
-        )
-      }
       navigate("/login", { state: { from: `/book/${resort!.idResort}` } })
     } else {
       navigate(`/book/${resort!.idResort}`)
@@ -208,6 +208,24 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return result
 }
 
+function computeCols(maxCount: number, vw: number): number {
+  if (vw < 480) return maxCount <= 4 ? 2 : maxCount <= 9 ? 3 : 4
+  if (vw < 768) return maxCount <= 6 ? 3 : maxCount <= 16 ? 4 : 5
+  return maxCount <= 8 ? 4 : maxCount <= 20 ? 6 : maxCount <= 40 ? 8 : 10
+}
+
+function useViewport() {
+  const [vw, setVw] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth : 1024,
+  )
+  useEffect(() => {
+    const handler = () => setVw(window.innerWidth)
+    window.addEventListener("resize", handler)
+    return () => window.removeEventListener("resize", handler)
+  }, [])
+  return vw
+}
+
 function BeachMap({
   allUnits,
   selectedUnitId,
@@ -220,15 +238,18 @@ function BeachMap({
   const umbrellas = allUnits.filter((u) => u.type === "UMBRELLA")
   const tents = allUnits.filter((u) => u.type === "TENT")
 
-  // Dynamic column count: aim for 2–5 rows per type
+  const vw = useViewport()
   const maxCount = Math.max(umbrellas.length, tents.length, 1)
-  const COLS = maxCount <= 8 ? 4 : maxCount <= 20 ? 6 : maxCount <= 40 ? 8 : 10
+  const COLS = computeCols(maxCount, vw)
+  const compact = vw < 640
 
   const umbrellaRows = chunkArray(umbrellas, COLS)
   const tentRows = chunkArray(tents, COLS)
 
+  const gap = compact ? "gap-1.5" : "gap-2"
+
   return (
-    <div className="overflow-x-auto rounded-2xl border border-border bg-white shadow-sm">
+    <div className="rounded-2xl border border-border bg-white shadow-sm">
       {/* Sea */}
       <div className="relative bg-gradient-to-b from-blue-700 via-blue-500 to-sky-400 py-5 text-center">
         <div className="flex items-center justify-center gap-2">
@@ -243,30 +264,28 @@ function BeachMap({
           preserveAspectRatio="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path
-            d="M0,9 Q75,0 150,9 T300,9 T450,9 T600,9 L600,18 L0,18 Z"
-            fill="hsl(39,33%,98%)"
-          />
+          <path d="M0,9 Q75,0 150,9 T300,9 T450,9 T600,9 L600,18 L0,18 Z" fill="hsl(39,33%,98%)" />
         </svg>
       </div>
 
       {/* Beach content */}
       <div
-        className="px-4 py-5"
+        className="px-3 py-4 sm:px-4 sm:py-5"
         style={{ background: "linear-gradient(to bottom, hsl(39,60%,97%), hsl(39,40%,93%))" }}
       >
         {/* Umbrellas */}
         {umbrellaRows.length > 0 && (
-          <div className="space-y-2">
+          <div className="space-y-1.5 sm:space-y-2">
             <SectionLabel icon={<Umbrella className="h-3 w-3" />} label="Sombrillas" color="text-sky-600" />
             {umbrellaRows.map((row, ri) => (
-              <div key={ri} className="flex justify-center gap-3">
+              <div key={ri} className={`flex justify-center ${gap}`}>
                 {row.map((unit) => (
                   <UnitCell
                     key={unit.idRentalUnit}
                     unit={unit}
                     isSelected={unit.idRentalUnit === selectedUnitId}
                     onSelect={onSelect}
+                    compact={compact}
                   />
                 ))}
               </div>
@@ -276,9 +295,9 @@ function BeachMap({
 
         {/* Walkway divider */}
         {umbrellaRows.length > 0 && tentRows.length > 0 && (
-          <div className="my-4 flex items-center gap-3">
+          <div className="my-3 flex items-center gap-3 sm:my-4">
             <div className="h-0.5 flex-1 rounded-full bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-amber-600">
+            <span className="text-[9px] font-semibold uppercase tracking-widest text-amber-600 sm:text-[10px]">
               Paseo peatonal
             </span>
             <div className="h-0.5 flex-1 rounded-full bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
@@ -287,16 +306,17 @@ function BeachMap({
 
         {/* Tents */}
         {tentRows.length > 0 && (
-          <div className="space-y-2">
+          <div className="space-y-1.5 sm:space-y-2">
             <SectionLabel icon={<Tent className="h-3 w-3" />} label="Carpas" color="text-amber-700" />
             {tentRows.map((row, ri) => (
-              <div key={ri} className="flex justify-center gap-3">
+              <div key={ri} className={`flex justify-center ${gap}`}>
                 {row.map((unit) => (
                   <UnitCell
                     key={unit.idRentalUnit}
                     unit={unit}
                     isSelected={unit.idRentalUnit === selectedUnitId}
                     onSelect={onSelect}
+                    compact={compact}
                   />
                 ))}
               </div>
@@ -304,14 +324,13 @@ function BeachMap({
           </div>
         )}
       </div>
-
     </div>
   )
 }
 
 function SectionLabel({ icon, label, color }: { icon: React.ReactNode; label: string; color: string }) {
   return (
-    <div className={cn("mb-2 flex items-center justify-center gap-1.5 text-xs font-semibold uppercase tracking-widest", color)}>
+    <div className={cn("mb-1.5 flex items-center justify-center gap-1.5 text-xs font-semibold uppercase tracking-widest sm:mb-2", color)}>
       {icon} {label}
     </div>
   )
@@ -335,10 +354,12 @@ function UnitCell({
   unit,
   isSelected,
   onSelect,
+  compact = false,
 }: {
   unit: RentalUnit
   isSelected: boolean
   onSelect: (id: number | null) => void
+  compact?: boolean
 }) {
   const blocked = unit.isBlocked
   const isUmbrella = unit.type === "UMBRELLA"
@@ -350,35 +371,28 @@ function UnitCell({
       onClick={() => onSelect(isSelected ? null : unit.idRentalUnit)}
       title={blocked ? "No disponible" : `${isUmbrella ? "Sombrilla" : "Carpa"} ${unit.identifier} · ${formatCurrency(unit.dailyPrice)}/día`}
       className={cn(
-        "flex w-24 flex-col items-center justify-center gap-1 rounded-xl border-2 py-3 px-2 text-center transition-all duration-150",
+        "flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 text-center transition-all duration-150",
+        compact ? "w-[68px] px-1 py-2" : "w-24 px-2 py-3",
         blocked && "cursor-not-allowed border-gray-200 bg-gray-100 opacity-40",
-        isSelected &&
-          "scale-[1.06] border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/30",
-        !blocked &&
-          !isSelected &&
-          isUmbrella &&
+        isSelected && "scale-[1.06] border-primary bg-primary text-primary-foreground shadow-lg shadow-primary/30",
+        !blocked && !isSelected && isUmbrella &&
           "cursor-pointer border-sky-200 bg-sky-50 text-sky-800 hover:-translate-y-0.5 hover:border-sky-400 hover:bg-sky-100 hover:shadow-md",
-        !blocked &&
-          !isSelected &&
-          !isUmbrella &&
+        !blocked && !isSelected && !isUmbrella &&
           "cursor-pointer border-amber-200 bg-amber-50 text-amber-800 hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-100 hover:shadow-md",
       )}
     >
-      {/* Icon */}
       {isUmbrella ? (
-        <Umbrella className={cn("h-5 w-5 shrink-0", isSelected ? "text-white" : "text-sky-500", blocked && "text-gray-400")} />
+        <Umbrella className={cn(compact ? "h-4 w-4" : "h-5 w-5", "shrink-0", isSelected ? "text-white" : "text-sky-500", blocked && "text-gray-400")} />
       ) : (
-        <Tent className={cn("h-5 w-5 shrink-0", isSelected ? "text-white" : "text-amber-600", blocked && "text-gray-400")} />
+        <Tent className={cn(compact ? "h-4 w-4" : "h-5 w-5", "shrink-0", isSelected ? "text-white" : "text-amber-600", blocked && "text-gray-400")} />
       )}
-      {/* Identifier */}
-      <span className="text-xs font-bold leading-tight">{unit.identifier}</span>
-      {/* Price */}
+      <span className={cn("font-bold leading-tight", compact ? "text-[10px]" : "text-xs")}>{unit.identifier}</span>
       {!blocked && (
-        <span className={cn("text-[11px] font-semibold leading-none", isSelected ? "text-white/90" : "opacity-80")}>
+        <span className={cn("font-semibold leading-none", isSelected ? "text-white/90" : "opacity-80", compact ? "text-[9px]" : "text-[11px]")}>
           {formatCurrency(unit.dailyPrice)}
         </span>
       )}
-      {blocked && <span className="text-[10px] leading-none text-gray-400">ocupada</span>}
+      {blocked && <span className={cn("leading-none text-gray-400", compact ? "text-[8px]" : "text-[10px]")}>ocupada</span>}
     </button>
   )
 }

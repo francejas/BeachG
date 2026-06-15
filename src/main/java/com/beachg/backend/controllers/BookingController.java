@@ -94,7 +94,7 @@ public class BookingController {
             @RequestParam("external_reference") String externalReference,
             HttpServletResponse response) throws IOException {
         bookingService.confirmBookingPayment(Long.parseLong(externalReference));
-        response.sendRedirect(frontendUrl + "/payment/success");
+        response.sendRedirect(frontendUrl + "/payment/success?bookingId=" + externalReference);
     }
 
     @GetMapping("/pending")

@@ -55,7 +55,7 @@ export function LoginPage() {
         </Link>
       </p>
       <p className="mt-2 text-center text-xs text-muted-foreground">
-        <Umbrella className="mr-1 inline h-3 w-3" /> Demo: admin@beachg.com / xavier@correo.com
+        <Umbrella className="mr-1 inline h-3 w-3" /> Demo: admin.mdp@beachg.com / santi.rodriguez@gmail.com · contraseña: admin123
       </p>
     </AuthShell>
   )

@@ -304,7 +304,7 @@ npm run preview   # Preview del build
 
 ## Equipo
 
-Proyecto académico desarrollado para la materia de **Laboratorio de Aplicaciones** · UTN
+Proyecto académico desarrollado para la materia de **Programacion 3** · UTN
 
 | Contribuidor | GitHub |
 |---|---|
