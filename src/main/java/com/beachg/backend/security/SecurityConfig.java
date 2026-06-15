@@ -55,9 +55,11 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas públicas: login, registro de cliente, validación QR, callbacks de Mercado Pago
+                        // Rutas públicas
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/clients").permitAll()  // auto-registro web
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/clients").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/resorts", "/api/resorts/*").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/amenities", "/api/amenities/*").permitAll()
                         .requestMatchers("/api/guests/validate/**").permitAll()
                         .requestMatchers("/api/bookings/success", "/api/bookings/pending", "/api/bookings/failure").permitAll()
                         .anyRequest().authenticated()

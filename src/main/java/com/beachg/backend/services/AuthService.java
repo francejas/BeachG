@@ -31,7 +31,7 @@ public class AuthService {
 
         UserDetails userDetails = User.withUsername(client.getEmail())
                 .password(client.getPasswordHash())
-                .roles("USER")
+                .roles(client.getRole())
                 .build();
 
         String token = jwtUtil.generateToken(userDetails);

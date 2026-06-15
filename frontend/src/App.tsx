@@ -23,14 +23,7 @@ export default function App() {
   return (
     <Routes>
       {/* Standalone full-screen routes */}
-      <Route
-        path="/validate"
-        element={
-          <RequireAdmin>
-            <AdminValidatePage />
-          </RequireAdmin>
-        }
-      />
+      <Route path="/validate" element={<AdminValidatePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
