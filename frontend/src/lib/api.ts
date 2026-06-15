@@ -35,8 +35,10 @@ export function getApiErrorMessage(error: unknown, fallback = "Algo salió mal. 
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as { message?: string; error?: string } | string | undefined
     if (typeof data === "string" && data.trim()) return data
-    if (data?.message) return data.message
-    if (data?.error) return data.error
+    if (data && typeof data === "object") {
+      if (data.message) return data.message
+      if (data.error) return data.error
+    }
     if (error.message) return error.message
   }
   return fallback

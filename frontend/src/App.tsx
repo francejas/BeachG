@@ -11,19 +11,26 @@ import { BookingPage } from "@/pages/BookingPage"
 import { MyBookingsPage } from "@/pages/MyBookingsPage"
 import { BookingDetailPage } from "@/pages/BookingDetailPage"
 import { PaymentSuccessPage } from "@/pages/PaymentSuccessPage"
-import { ValidatePage } from "@/pages/ValidatePage"
+import AdminValidatePage from "@/pages/admin/AdminValidatePage"
 
 import { AdminDashboardPage } from "@/pages/admin/AdminDashboardPage"
-import { AdminResortPage } from "@/pages/admin/AdminResortPage"
-import { AdminUnitsPage } from "@/pages/admin/AdminUnitsPage"
-import { AdminWalkInPage } from "@/pages/admin/AdminWalkInPage"
-import { AdminBookingsPage } from "@/pages/admin/AdminBookingsPage"
+import AdminResortPage from "@/pages/admin/AdminResortPage"
+import AdminUnitsPage from "@/pages/admin/AdminUnitsPage"
+import AdminWalkInPage from "@/pages/admin/AdminWalkInPage"
+import AdminBookingsPage from "@/pages/admin/AdminBookingsPage"
 
 export default function App() {
   return (
     <Routes>
       {/* Standalone full-screen routes */}
-      <Route path="/validate" element={<ValidatePage />} />
+      <Route
+        path="/validate"
+        element={
+          <RequireAdmin>
+            <AdminValidatePage />
+          </RequireAdmin>
+        }
+      />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
