@@ -48,12 +48,16 @@ export function BookingDetailPage() {
                   </p>
                 )}
               </div>
-              {booking.resortId && (
-                <Link to={`/resorts/${booking.resortId}`}>
+              {booking.resortLocation && (
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(booking.resortLocation)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Button variant="outline" size="sm">
-                    <ExternalLink className="h-3.5 w-3.5" /> Ver balneario
+                    <ExternalLink className="h-3.5 w-3.5" /> Cómo llegar
                   </Button>
-                </Link>
+                </a>
               )}
             </div>
           </div>
@@ -134,7 +138,7 @@ export function BookingDetailPage() {
               Mostrá estos códigos en la entrada. Cada huésped tiene el suyo.
             </p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {booking.guests.map((g) => (
+              {(booking.guests ?? []).map((g) => (
                 <GuestQR key={g.idGuest} guest={g} />
               ))}
             </div>

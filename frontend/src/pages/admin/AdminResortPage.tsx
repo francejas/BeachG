@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react"
-import { Check, MapPin, Save } from "lucide-react"
+import { Check, ExternalLink, MapPin, Save } from "lucide-react"
 import { useAmenities, useMyResort, useUpdateMyResort } from "@/lib/queries"
 import { getApiErrorMessage } from "@/lib/api"
 import { amenityIcon, resortCover } from "@/components/resort-helpers"
 import { Button, Card, CardBody, ErrorState, Input, Label, Loading, Textarea } from "@/components/ui"
+import { AddressAutocomplete } from "@/components/AddressAutocomplete"
 import { cn } from "@/lib/utils"
 
 export default function AdminResortPage() {
@@ -38,6 +39,10 @@ export default function AdminResortPage() {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
     setFeedback(null)
+    if (!location.trim()) {
+      setFeedback({ type: "error", msg: "La ubicación es obligatoria." })
+      return
+    }
     try {
       await updateResort.mutateAsync({ name, location, coverPhotoUrl, description, amenityIds: selectedAmenities })
       setFeedback({ type: "success", msg: "Cambios guardados correctamente." })
@@ -63,7 +68,7 @@ export default function AdminResortPage() {
               </div>
               <div>
                 <Label htmlFor="location">Ubicación</Label>
-                <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} required />
+                <AddressAutocomplete id="location" value={location} onChange={setLocation} />
               </div>
               <div>
                 <Label htmlFor="cover">URL de foto de portada</Label>
@@ -145,6 +150,16 @@ export default function AdminResortPage() {
                 <MapPin className="h-3.5 w-3.5" />
                 {location || "Ubicación"}
               </p>
+              {location && (
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                >
+                  <ExternalLink className="h-3 w-3" /> Ver en Google Maps
+                </a>
+              )}
             </CardBody>
           </Card>
         </div>

@@ -11,6 +11,7 @@ import {
   Umbrella,
 } from "lucide-react"
 import { useClientBookings, useClient, useResorts } from "@/lib/queries"
+import { AddressAutocomplete } from "@/components/AddressAutocomplete"
 import { getApiErrorMessage } from "@/lib/api"
 import { useAuth } from "@/lib/auth"
 import { Button, Card, ErrorState, Loading, StatusBadge } from "@/components/ui"
@@ -26,8 +27,7 @@ export function DashboardPage() {
 
   const [searchCity, setSearchCity] = useState("")
   const [searchName, setSearchName] = useState("")
-  const [searchDate, setSearchDate] = useState("")
-  const [applied, setApplied] = useState({ city: "", name: "", date: "" })
+  const [applied, setApplied] = useState({ city: "", name: "" })
 
   const today = todayISO()
 
@@ -46,12 +46,19 @@ export function DashboardPage() {
   const pendingCount = bookings?.filter((b) => b.status === "PENDING").length ?? 0
 
   function handleSearch() {
-    setApplied({ city: searchCity.trim(), name: searchName.trim(), date: searchDate })
+    setApplied({ city: searchCity.trim(), name: searchName.trim() })
   }
 
-  const hasFilters = applied.city || applied.name || applied.date
+  function handleClear() {
+    setSearchCity("")
+    setSearchName("")
+    setApplied({ city: "", name: "" })
+  }
+
+  const hasFilters = applied.city || applied.name
   const filteredResorts = resorts?.filter((r) => {
-    const matchesCity = !applied.city || r.location.toLowerCase().includes(applied.city.toLowerCase())
+    const cityKey = applied.city.split(",")[0].trim().toLowerCase()
+    const matchesCity = !applied.city || r.location.toLowerCase().includes(cityKey)
     const matchesName = !applied.name || r.name.toLowerCase().includes(applied.name.toLowerCase())
     return matchesCity && matchesName
   })
@@ -71,7 +78,7 @@ export function DashboardPage() {
 
       {/* Stats row */}
       {!loadingBookings && (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 stagger">
           <StatCard
             label="Reservas confirmadas"
             value={confirmedCount}
@@ -138,17 +145,11 @@ export function DashboardPage() {
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-1">
               <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ciudad</label>
-              <div className="relative">
-                <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Ej: Mar del Plata"
-                  value={searchCity}
-                  onChange={(e) => setSearchCity(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                  className="w-full rounded-lg border border-border bg-background py-2.5 pl-9 pr-3 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                />
-              </div>
+              <AddressAutocomplete
+                value={searchCity}
+                onChange={setSearchCity}
+                placeholder="Ej: Mar del Plata"
+              />
             </div>
             <div className="space-y-1">
               <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Balneario</label>
@@ -164,23 +165,16 @@ export function DashboardPage() {
                 />
               </div>
             </div>
-            <div className="space-y-1">
-              <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Fecha</label>
-              <div className="relative">
-                <Calendar className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="date"
-                  value={searchDate}
-                  onChange={(e) => setSearchDate(e.target.value)}
-                  className="w-full rounded-lg border border-border bg-background py-2.5 pl-9 pr-3 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                />
-              </div>
+            <div className="flex items-end gap-2">
+              {hasFilters && (
+                <Button variant="outline" onClick={handleClear} className="shrink-0">
+                  Limpiar
+                </Button>
+              )}
+              <Button onClick={handleSearch} className="shrink-0">
+                <Search className="h-4 w-4" /> Buscar
+              </Button>
             </div>
-          </div>
-          <div className="mt-4 flex justify-end">
-            <Button onClick={handleSearch}>
-              <Search className="h-4 w-4" /> Buscar
-            </Button>
           </div>
         </Card>
 
@@ -307,13 +301,14 @@ function ResortCard({ resort }: { resort: Resort }) {
 
   return (
     <Link to={`/resorts/${resort.idResort}`} className="group">
-      <Card className="overflow-hidden transition-shadow hover:shadow-md">
+      <Card className="overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5">
         <div className="relative h-36 overflow-hidden">
           <img
             src={resortCover(resort)}
             alt={resort.name}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
         </div>
         <div className="p-4">
           <h3 className="font-bold">{resort.name}</h3>

@@ -23,14 +23,17 @@ export function AdminLayout() {
 
   return (
     <div className="flex min-h-screen bg-secondary/40">
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-card md:flex">
-        <div className="flex h-16 items-center gap-2 border-b border-border px-6 font-extrabold text-lg">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Umbrella className="h-4 w-4" />
-          </span>
-          Beach<span className="-ml-1.5 text-primary">G</span>
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-gradient-to-b from-card via-card to-secondary/40 md:flex">
+        <div className="flex h-16 items-center gap-2.5 border-b border-border bg-gradient-to-r from-primary/10 to-transparent px-5">
+          <svg viewBox="0 0 38 38" className="h-8 w-8 shrink-0" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="38" height="38" rx="10" fill="hsl(199,89%,42%)"/>
+            <circle cx="19" cy="14" r="5" fill="white"/>
+            <path d="M6 25c2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0 2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0" stroke="white" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+            <path d="M6 30c2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0 2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.45"/>
+          </svg>
+          <span className="font-display text-lg font-extrabold tracking-tight">Beach<span className="text-primary">G</span></span>
         </div>
-        <nav className="flex flex-1 flex-col gap-1 p-3">
+        <nav className="flex flex-1 flex-col gap-0.5 p-3 stagger">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -38,12 +41,14 @@ export function AdminLayout() {
               end={item.end}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                  isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted",
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )
               }
             >
-              <item.icon className="h-4 w-4" />
+              <item.icon className="h-4 w-4 shrink-0" />
               {item.label}
             </NavLink>
           ))}
@@ -52,7 +57,7 @@ export function AdminLayout() {
           <p className="truncate px-3 pb-2 text-xs text-muted-foreground">{email}</p>
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all duration-150 hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut className="h-4 w-4" />
             Cerrar sesión
@@ -63,8 +68,14 @@ export function AdminLayout() {
       {/* Mobile top bar */}
       <div className="flex w-full flex-col">
         <div className="flex items-center justify-between border-b border-border bg-card px-4 py-3 md:hidden">
-          <div className="flex items-center gap-2 font-extrabold">
-            <Umbrella className="h-5 w-5 text-primary" /> BeachG Admin
+          <div className="flex items-center gap-2">
+            <svg viewBox="0 0 38 38" className="h-7 w-7 shrink-0" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="38" height="38" rx="10" fill="hsl(199,89%,42%)"/>
+              <circle cx="19" cy="14" r="5" fill="white"/>
+              <path d="M6 25c2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0 2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0" stroke="white" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+              <path d="M6 30c2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0 2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.45"/>
+            </svg>
+            <span className="font-display font-extrabold tracking-tight">Beach<span className="text-primary">G</span></span>
           </div>
           <button onClick={handleLogout} aria-label="Cerrar sesión" className="rounded-lg p-2 hover:bg-muted">
             <LogOut className="h-5 w-5" />
@@ -79,8 +90,8 @@ export function AdminLayout() {
               end={item.end}
               className={({ isActive }) =>
                 cn(
-                  "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium",
-                  isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted",
+                  "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-150",
+                  isActive ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )
               }
             >
@@ -91,7 +102,7 @@ export function AdminLayout() {
         </nav>
 
         <main className="flex-1 p-4 md:p-8">
-          <div className="mx-auto max-w-5xl">
+          <div className="mx-auto max-w-5xl animate-fade-in">
             <Outlet />
           </div>
         </main>

@@ -16,6 +16,15 @@ export const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem(TOKEN_KEY)
   if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))
+      if (payload.exp && Date.now() / 1000 > payload.exp) {
+        localStorage.removeItem(TOKEN_KEY)
+        localStorage.removeItem(CLIENT_ID_KEY)
+        if (!window.location.pathname.startsWith("/login")) window.location.href = "/login"
+        return Promise.reject(new Error("Token expirado"))
+      }
+    } catch {}
     config.headers.Authorization = `Bearer ${token}`
   }
   return config

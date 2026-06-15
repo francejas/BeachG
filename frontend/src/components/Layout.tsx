@@ -1,21 +1,25 @@
 import { Outlet } from "react-router-dom"
-import { Umbrella } from "lucide-react"
 import { Navbar } from "./Navbar"
 
 export function PublicLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 animate-fade-in">
         <Outlet />
       </main>
       <footer className="border-t border-border bg-card">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row sm:items-start">
             <div>
-              <div className="flex items-center gap-2 font-bold text-foreground">
-                <Umbrella className="h-4 w-4 text-primary" />
-                BeachG
+              <div className="flex items-center gap-2">
+                <svg viewBox="0 0 38 38" className="h-7 w-7 shrink-0" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="38" height="38" rx="10" fill="hsl(199,89%,42%)"/>
+                  <circle cx="19" cy="14" r="5" fill="white"/>
+                  <path d="M6 25c2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0 2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0" stroke="white" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+                  <path d="M6 30c2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0 2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.45"/>
+                </svg>
+                <span className="font-display font-bold tracking-tight">Beach<span className="text-primary">G</span></span>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">Reservá tu lugar en la playa. Pagá online, ingresá con QR.</p>
             </div>

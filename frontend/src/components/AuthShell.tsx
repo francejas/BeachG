@@ -9,8 +9,8 @@ export function AuthShell({ title, subtitle, children }: { title: string; subtit
       <div className="relative hidden w-1/2 lg:block">
         <img src="/images/hero-beach.png" alt="" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-br from-accent/80 to-primary/50" />
-        <div className="relative flex h-full flex-col justify-between p-12 text-primary-foreground">
-          <Link to="/" className="flex items-center gap-2 text-xl font-extrabold">
+        <div className="relative flex h-full flex-col justify-center p-12 text-primary-foreground">
+          <Link to="/" className="mb-10 flex items-center gap-2 text-xl font-extrabold">
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/20 backdrop-blur">
               <Umbrella className="h-5 w-5" />
             </span>

@@ -20,6 +20,12 @@ function decodeJwt(token: string): JwtPayload | null {
   }
 }
 
+function isTokenExpired(token: string): boolean {
+  const payload = decodeJwt(token)
+  if (!payload?.exp) return false
+  return Date.now() / 1000 > payload.exp
+}
+
 function roleFromToken(token: string | null): Role {
   if (!token) return null
   const payload = decodeJwt(token)
@@ -48,7 +54,15 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY))
+  const [token, setToken] = useState<string | null>(() => {
+    const t = localStorage.getItem(TOKEN_KEY)
+    if (t && isTokenExpired(t)) {
+      localStorage.removeItem(TOKEN_KEY)
+      localStorage.removeItem(CLIENT_ID_KEY)
+      return null
+    }
+    return t
+  })
   const [clientId, setClientId] = useState<number | null>(() => {
     const v = localStorage.getItem(CLIENT_ID_KEY)
     return v ? Number(v) : null
@@ -76,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       clientId,
       role: roleFromToken(token),
       email: emailFromToken(token),
-      isAuthenticated: Boolean(token),
+      isAuthenticated: Boolean(token) && !isTokenExpired(token!),
       login,
       logout,
     }),

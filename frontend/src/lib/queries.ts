@@ -81,7 +81,7 @@ export function useUpdateUnitPrice() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async ({ id, newPrice }: { id: number; newPrice: number }) =>
-      (await api.patch<RentalUnit>(`/api/rental-units/${id}/price`, null, { params: { newPrice } })).data,
+      (await api.patch<RentalUnit>(`/api/rental-units/${id}/price`, {}, { params: { newPrice } })).data,
     onSuccess: () => qc.invalidateQueries({ queryKey: ["rental-units"] }),
   })
 }
@@ -90,7 +90,7 @@ export function useUpdateUnitBlock() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async ({ id, isBlocked }: { id: number; isBlocked: boolean }) =>
-      (await api.patch<RentalUnit>(`/api/rental-units/${id}/block`, null, { params: { isBlocked } })).data,
+      (await api.patch<RentalUnit>(`/api/rental-units/${id}/block`, {}, { params: { isBlocked } })).data,
     onSuccess: () => qc.invalidateQueries({ queryKey: ["rental-units"] }),
   })
 }

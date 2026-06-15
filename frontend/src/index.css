@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,30 +6,30 @@
 @layer base {
   :root {
     --background: 40 33% 98%;
-    --foreground: 202 30% 16%;
+    --foreground: 202 30% 14%;
 
     --card: 0 0% 100%;
-    --card-foreground: 202 30% 16%;
+    --card-foreground: 202 30% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 202 30% 16%;
+    --popover-foreground: 202 30% 14%;
 
-    --primary: 199 89% 48%;
+    --primary: 199 89% 42%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 37 41% 93%;
     --secondary-foreground: 202 30% 20%;
 
     --muted: 40 20% 94%;
-    --muted-foreground: 202 12% 45%;
+    --muted-foreground: 202 12% 50%;
 
-    --accent: 201 96% 39%;
+    --accent: 201 96% 34%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 75% 51%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 152 62% 40%;
+    --success: 152 58% 38%;
     --success-foreground: 0 0% 100%;
 
     --warning: 38 92% 50%;
@@ -37,11 +37,15 @@
 
     --sand: 37 41% 93%;
 
-    --border: 40 18% 88%;
-    --input: 40 18% 88%;
-    --ring: 199 89% 48%;
+    --border: 40 16% 88%;
+    --input: 40 16% 88%;
+    --ring: 199 89% 42%;
 
     --radius: 0.75rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   * {
@@ -51,7 +55,92 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.015em;
+  }
+
+  /* Text selection */
+  ::selection {
+    background: hsl(199 89% 42% / 0.15);
+    color: hsl(var(--foreground));
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.4);
+  }
+}
+
+/* Keyframes */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+@layer utilities {
+  .animate-fade-in  { animation: fade-in  0.28s ease-out both; }
+  .animate-slide-up { animation: slide-up 0.4s  ease-out both; }
+  .animate-scale-in { animation: scale-in 0.2s  ease-out both; }
+  .animate-float    { animation: float 3s ease-in-out infinite; }
+
+  .font-display { font-family: "Outfit", ui-sans-serif, system-ui, sans-serif; }
+
+  /* Staggered children */
+  .stagger > * { animation: fade-in 0.3s ease-out both; }
+  .stagger > *:nth-child(1) { animation-delay: 0ms;   }
+  .stagger > *:nth-child(2) { animation-delay: 70ms;  }
+  .stagger > *:nth-child(3) { animation-delay: 140ms; }
+  .stagger > *:nth-child(4) { animation-delay: 210ms; }
+  .stagger > *:nth-child(5) { animation-delay: 280ms; }
+  .stagger > *:nth-child(6) { animation-delay: 350ms; }
+
+  /* Glass effect */
+  .glass {
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    background: hsl(0 0% 100% / 0.15);
+    border: 1px solid hsl(0 0% 100% / 0.25);
+  }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

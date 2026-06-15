@@ -33,11 +33,16 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 text-lg font-extrabold tracking-tight">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Umbrella className="h-5 w-5" />
-          </span>
-          <span>
+        <Link to="/" className="flex items-center gap-2.5">
+          <svg viewBox="0 0 38 38" className="h-9 w-9 shrink-0" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="38" height="38" rx="10" fill="hsl(199,89%,42%)"/>
+            {/* Sun */}
+            <circle cx="19" cy="14" r="5" fill="white"/>
+            {/* Waves */}
+            <path d="M6 25c2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0 2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0" stroke="white" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+            <path d="M6 30c2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0 2.2-3.5 4.3-3.5 6.5 0 2.2 3.5 4.3 3.5 6.5 0" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.45"/>
+          </svg>
+          <span className="font-display text-xl font-extrabold tracking-tight">
             Beach<span className="text-primary">G</span>
           </span>
         </Link>
@@ -51,33 +56,40 @@ export function Navbar() {
           )}
 
           {isAuthenticated && role === "USER" && (
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setDropdownOpen((o) => !o)}
-                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
-              >
-                Mi cuenta <ChevronDown className={cn("h-4 w-4 transition-transform", dropdownOpen && "rotate-180")} />
-              </button>
-              {dropdownOpen && (
-                <div className="absolute right-0 top-full mt-1 w-52 rounded-xl border border-border bg-card shadow-lg">
-                  <div className="p-1">
-                    <DropItem to="/dashboard" icon={<Home className="h-4 w-4" />} label="Inicio" onClose={() => setDropdownOpen(false)} />
-                    <DropItem to="/my-bookings" icon={<BookOpen className="h-4 w-4" />} label="Mis reservas" onClose={() => setDropdownOpen(false)} />
-                    <DropItem to="/profile" icon={<Settings className="h-4 w-4" />} label="Mi perfil" onClose={() => setDropdownOpen(false)} />
-                    <div className="my-1 border-t border-border" />
-                    <button
-                      onClick={handleLogout}
-                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10"
-                    >
-                      Cerrar sesión
-                    </button>
+            <>
+              <Link to="/dashboard" className="rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted">
+                Inicio
+              </Link>
+              <Link to="/" className="rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted">
+                Buscar balnearios
+              </Link>
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen((o) => !o)}
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+                >
+                  Mi cuenta <ChevronDown className={cn("h-4 w-4 transition-transform", dropdownOpen && "rotate-180")} />
+                </button>
+                {dropdownOpen && (
+                  <div className="absolute right-0 top-full mt-1 w-52 rounded-xl border border-border bg-card shadow-lg">
+                    <div className="p-1">
+                      <DropItem to="/my-bookings" icon={<BookOpen className="h-4 w-4" />} label="Mis reservas" onClose={() => setDropdownOpen(false)} />
+                      <DropItem to="/profile" icon={<Settings className="h-4 w-4" />} label="Mi perfil" onClose={() => setDropdownOpen(false)} />
+                      <div className="my-1 border-t border-border" />
+                      <button
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10"
+                      >
+                        Cerrar sesión
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            </>
           )}
 
-          {isAuthenticated && role === "ADMIN" && (
+          {isAuthenticated && (role === "ADMIN" || !role) && (
             <Button variant="outline" size="sm" className="ml-2" onClick={handleLogout}>
               Cerrar sesión
             </Button>
@@ -121,6 +133,9 @@ export function Navbar() {
             <>
               <Link to="/dashboard" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted">
                 Inicio
+              </Link>
+              <Link to="/" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted">
+                Buscar balnearios
               </Link>
               <Link to="/my-bookings" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted">
                 Mis reservas

@@ -7,11 +7,11 @@ type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "destructiv
 type ButtonSize = "sm" | "md" | "lg" | "icon"
 
 const buttonVariants: Record<ButtonVariant, string> = {
-  primary: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
-  secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/70",
-  outline: "border border-border bg-card text-foreground hover:bg-muted",
-  ghost: "text-foreground hover:bg-muted",
-  destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+  primary: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm hover:shadow-md",
+  secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm",
+  outline: "border border-border bg-card text-foreground hover:bg-muted hover:border-primary/40 hover:text-primary",
+  ghost: "text-muted-foreground hover:bg-muted hover:text-foreground",
+  destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm hover:shadow-md",
 }
 
 const buttonSizes: Record<ButtonSize, string> = {
@@ -33,7 +33,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center gap-2 rounded-lg font-semibold cursor-pointer transition-all duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:active:scale-100",
         buttonVariants[variant],
         buttonSizes[size],
         className,
@@ -52,7 +52,7 @@ export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputE
     <input
       ref={ref}
       className={cn(
-        "flex h-11 w-full rounded-lg border border-input bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50",
+        "flex h-11 w-full rounded-lg border border-input bg-card px-3.5 text-sm text-foreground placeholder:text-muted-foreground transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent disabled:opacity-50",
         className,
       )}
       {...props}
@@ -66,7 +66,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<H
     <textarea
       ref={ref}
       className={cn(
-        "flex min-h-[80px] w-full rounded-lg border border-input bg-card px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "flex min-h-[80px] w-full rounded-lg border border-input bg-card px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent",
         className,
       )}
       {...props}
@@ -80,7 +80,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSel
     <select
       ref={ref}
       className={cn(
-        "flex h-11 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "flex h-11 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent",
         className,
       )}
       {...props}
@@ -100,7 +100,7 @@ export function Label({ className, children, ...props }: { className?: string; c
 }
 
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
-  return <div className={cn("rounded-xl border border-border bg-card shadow-sm", className)}>{children}</div>
+  return <div className={cn("rounded-xl border border-border bg-card shadow-sm transition-shadow duration-200", className)}>{children}</div>
 }
 
 export function CardBody({ className, children }: { className?: string; children: ReactNode }) {
