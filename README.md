@@ -305,3 +305,12 @@ npm run preview   # Preview del build
 ## Equipo
 
 Proyecto académico desarrollado para la materia de **Laboratorio de Aplicaciones** · UTN
+
+| Contribuidor | GitHub |
+|---|---|
+| Francisco Cejas | [@francejas](https://github.com/francejas) |
+| Axel Ovejero Gallardo | [@AxelOvejeroGallardo](https://github.com/AxelOvejeroGallardo) |
+| Juan Pablo Bercovsky | [@Berkovv](https://github.com/Berkovv) |
+| Facundo Gauthier | [@FacuGauthier](https://github.com/FacuGauthier) |
+
+Repositorio: [github.com/francejas/BeachG](https://github.com/francejas/BeachG)
