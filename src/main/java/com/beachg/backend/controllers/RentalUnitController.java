@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/rental-units")
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class RentalUnitController {
 

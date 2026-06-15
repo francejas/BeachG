@@ -34,6 +34,7 @@ services:
       # Le pasamos el token de Mercado Pago desde tu archivo .env
       MP_ACCESS_TOKEN: ${MP_ACCESS_TOKEN}
       NGROK_BASE_URL: ${NGROK_BASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
 
 volumes:
   # Esto guarda la info para que las reservas no se borren si apagás la compu

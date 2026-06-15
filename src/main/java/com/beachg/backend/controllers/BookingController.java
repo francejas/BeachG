@@ -15,7 +15,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookings")
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class BookingController {
 

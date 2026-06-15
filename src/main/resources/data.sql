@@ -1,8 +1,9 @@
 -- ==========================================
 -- 1. CARGA DE CLIENTES
 -- ==========================================
--- ID 1: "Cliente Mostrador" para las ventas presenciales (Walk-in)
--- IDs 2 al 10: Clientes de prueba para usar en Postman
+-- ID 1: "Cliente Mostrador" — cuenta universal para reservas presenciales (Walk-in)
+--        Todas las reservas walk-in se crean con clientId=1.
+-- IDs 2 al 10: Clientes de prueba
 INSERT IGNORE INTO client (id_client, first_name, last_name, email, phone, password_hash) VALUES
 (1, 'Cliente', 'Mostrador', 'mostrador@beachg.com', '0000000000', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
 (2, 'Xavier', 'Cejas', 'xavier@correo.com', '2234567890', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
@@ -13,7 +14,10 @@ INSERT IGNORE INTO client (id_client, first_name, last_name, email, phone, passw
 (7, 'Juan', 'Perez', 'juanperez@correo.com', '1133221100', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
 (8, 'Lucia', 'Fernandez', 'lucia.f@correo.com', '2235554433', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
 (9, 'Roberto', 'Sosa', 'roberto.s@correo.com', '1188776655', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
-(10, 'Jimena', 'Diaz', 'jime.diaz@correo.com', '2234445566', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a');
+(10, 'Jimena', 'Diaz', 'jime.diaz@correo.com', '2234445566', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a'),
+-- ID 11: Admin del balneario — credenciales creadas por el equipo, no por el usuario.
+--        Contraseña: "admin123" (mismo hash que el resto de los usuarios de prueba)
+(11, 'Admin', 'BeachG', 'admin@beachg.com', '0000000001', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a');
 
 -- ==========================================
 -- 2. CARGA DE BALNEARIOS (RESORTS)

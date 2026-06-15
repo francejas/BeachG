@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/resorts")
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class ResortController {
 

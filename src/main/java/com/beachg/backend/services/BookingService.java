@@ -11,8 +11,10 @@ import com.beachg.backend.repositories.ClientRepository;
 import com.beachg.backend.repositories.GuestRepository;
 import com.beachg.backend.repositories.RentalUnitRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -21,6 +23,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingService {
@@ -30,7 +33,7 @@ public class BookingService {
     private final RentalUnitRepository rentalUnitRepository;
     private final GuestRepository guestRepository;
 
-    // Cambio obligatorio: Debe retornar BookingResponse para que el controller funcione
+    @Transactional
     public BookingResponse createBooking(BookingRequest request) {
 
         // 1. Validar disponibilidad en la BD (Consulta personalizada)
@@ -68,9 +71,7 @@ public class BookingService {
         booking.setWalkInDni(request.walkInDni());
         // --------------------------------------
 
-        long days = request.endDate().toEpochDay() - request.startDate().toEpochDay();
-
-        booking.setTotalPrice(days * rentalUnit.getDailyPrice());
+        booking.setTotalPrice(calculateTotalPrice(request.startDate(), request.endDate(), rentalUnit.getDailyPrice()));
 
         Booking savedBooking = bookingRepository.save(booking);
 
@@ -208,7 +209,7 @@ public class BookingService {
             // saveAll es mucho más rápido que hacer un save() por cada reserva en un bucle
             bookingRepository.saveAll(expiredBookings);
 
-            System.out.println("Limpieza automática: Se cancelaron " + expiredBookings.size() + " reservas por falta de pago.");
+            log.info("Limpieza automática: {} reservas canceladas por falta de pago.", expiredBookings.size());
         }
     }
 

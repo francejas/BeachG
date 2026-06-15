@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/amenities")
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class AmenityController {
 
