@@ -11,8 +11,10 @@ import com.beachg.backend.repositories.ClientRepository;
 import com.beachg.backend.repositories.GuestRepository;
 import com.beachg.backend.repositories.RentalUnitRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -21,6 +23,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingService {
@@ -30,7 +33,7 @@ public class BookingService {
     private final RentalUnitRepository rentalUnitRepository;
     private final GuestRepository guestRepository;
 
-    // Cambio obligatorio: Debe retornar BookingResponse para que el controller funcione
+    @Transactional
     public BookingResponse createBooking(BookingRequest request) {
 
         // 1. Validar disponibilidad en la BD (Consulta personalizada)
@@ -38,8 +41,11 @@ public class BookingService {
             throw new UnitNotAvailableException("La unidad seleccionada ya está ocupada en ese rango de fechas.");
         }
 
-        Client client = clientRepository.findById(request.clientId())
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        Client client = null;
+        if (request.clientId() != null && request.clientId() > 0) {
+            client = clientRepository.findById(request.clientId())
+                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        }
 
         RentalUnit rentalUnit = rentalUnitRepository.findById(request.rentalUnitId())
                 .orElseThrow(() -> new RuntimeException("Unidad no encontrada"));
@@ -51,15 +57,7 @@ public class BookingService {
         booking.setClient(client);
         booking.setRentalUnit(rentalUnit);
 
-        // =========================================================
-        // --- LÓGICA DE ESTADO SEGÚN TIPO DE RESERVA (WALK-IN) ---
-        // =========================================================
-        if (request.isWalkIn() != null && request.isWalkIn()) {
-            booking.setStatus(Status.CONFIRMED); // Presencial: ya pagó en caja
-        } else {
-            booking.setStatus(Status.PENDING); // Web: espera a Mercado Pago
-        }
-        // =========================================================
+        booking.setStatus(Status.PENDING); // Siempre PENDING — el controller walk-in llama confirmBookingPayment
 
         booking.setCreatedAt(LocalDateTime.now());
 
@@ -68,9 +66,7 @@ public class BookingService {
         booking.setWalkInDni(request.walkInDni());
         // --------------------------------------
 
-        long days = request.endDate().toEpochDay() - request.startDate().toEpochDay();
-
-        booking.setTotalPrice(days * rentalUnit.getDailyPrice());
+        booking.setTotalPrice(calculateTotalPrice(request.startDate(), request.endDate(), rentalUnit.getDailyPrice()));
 
         Booking savedBooking = bookingRepository.save(booking);
 
@@ -78,28 +74,32 @@ public class BookingService {
         List<Guest> invitadosGuardados = new ArrayList<>();
 
         if (request.guestNames() != null && !request.guestNames().isEmpty()) {
-
             for (String guestName : request.guestNames()) {
-
                 Guest guest = new Guest();
-
                 guest.setFullName(guestName);
-
                 guest.setQrToken(UUID.randomUUID().toString());
-
                 guest.setIsEntryValidated(false);
-
                 guest.setBooking(savedBooking);
-
-                // Guardamos en una lista temporal para poder mostrarlos en el DTO
                 invitadosGuardados.add(guestRepository.save(guest));
             }
         }
 
+        // Si no se especificaron huéspedes y hay cliente registrado, crear QR por defecto
+        if (invitadosGuardados.isEmpty() && client != null) {
+            Guest guest = new Guest();
+            guest.setFullName(client.getFirstName() + " " + client.getLastName());
+            guest.setQrToken(UUID.randomUUID().toString());
+            guest.setIsEntryValidated(false);
+            guest.setBooking(savedBooking);
+            invitadosGuardados.add(guestRepository.save(guest));
+        }
+
         // Mapeo de la respuesta final al DTO
         List<GuestSummaryResponse> guestResponses = invitadosGuardados.stream()
-                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated()))
+                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated(), g.getQrToken()))
                 .toList();
+
+        var resort = rentalUnit.getResort();
 
         return new BookingResponse(
                 savedBooking.getId(),
@@ -108,11 +108,15 @@ public class BookingService {
                 savedBooking.getTotalPrice(),
                 savedBooking.getStatus(),
                 savedBooking.getCreatedAt(),
-                client.getIdClient(),
+                client != null ? client.getIdClient() : null,
                 rentalUnit.getIdRentalUnit(),
                 guestResponses,
                 savedBooking.getWalkInName(),
-                savedBooking.getWalkInDni()
+                savedBooking.getWalkInDni(),
+                resort != null ? resort.getIdResort() : null,
+                resort != null ? resort.getName() : null,
+                resort != null ? resort.getLocation() : null,
+                resort != null ? resort.getCoverPhotoUrl() : null
         );
     }
 
@@ -144,18 +148,35 @@ public class BookingService {
     }
 
     // Obtener el detalle completo de una reserva específica por su ID
+    @Transactional
     public BookingResponse getBookingById(Long id) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada con el ID: " + id));
+
+        // Auto-crear guest si la reserva está confirmada, no tiene guests y tiene cliente
+        if (booking.getStatus() == Status.CONFIRMED
+                && (booking.getGuests() == null || booking.getGuests().isEmpty())
+                && booking.getClient() != null) {
+            Client client = booking.getClient();
+            Guest guest = new Guest();
+            guest.setFullName(client.getFirstName() + " " + client.getLastName());
+            guest.setQrToken(UUID.randomUUID().toString());
+            guest.setIsEntryValidated(false);
+            guest.setBooking(booking);
+            guestRepository.save(guest);
+            booking.getGuests().add(guest);
+        }
+
         return mapToBookingResponse(booking);
     }
 
-    // Método helper privado para mapear la entidad Booking al DTO BookingResponse
     private BookingResponse mapToBookingResponse(Booking booking) {
         List<GuestSummaryResponse> guestResponses = booking.getGuests() != null ?
                 booking.getGuests().stream()
-                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated()))
+                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated(), g.getQrToken()))
                 .toList() : new ArrayList<>();
+
+        var resort = booking.getRentalUnit().getResort();
 
         return new BookingResponse(
                 booking.getId(),
@@ -164,12 +185,24 @@ public class BookingService {
                 booking.getTotalPrice(),
                 booking.getStatus(),
                 booking.getCreatedAt(),
-                booking.getClient().getIdClient(),
+                booking.getClient() != null ? booking.getClient().getIdClient() : null,
                 booking.getRentalUnit().getIdRentalUnit(),
                 guestResponses,
-                booking.getWalkInName(), // <-- Agregado
-                booking.getWalkInDni()   // <-- Agregado
+                booking.getWalkInName(),
+                booking.getWalkInDni(),
+                resort != null ? resort.getIdResort() : null,
+                resort != null ? resort.getName() : null,
+                resort != null ? resort.getLocation() : null,
+                resort != null ? resort.getCoverPhotoUrl() : null
         );
+    }
+
+    public BookingResponse cancelBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+        booking.setStatus(Status.CANCELED);
+        bookingRepository.save(booking);
+        return mapToBookingResponse(booking);
     }
 
     public void confirmBookingPayment(Long bookingId) {
@@ -177,9 +210,18 @@ public class BookingService {
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
 
         booking.setStatus(Status.CONFIRMED);
-
-        // Guardamos los cambios
         bookingRepository.save(booking);
+
+        // Auto-crear guest si no hay ninguno y hay cliente registrado
+        if ((booking.getGuests() == null || booking.getGuests().isEmpty()) && booking.getClient() != null) {
+            Client client = booking.getClient();
+            Guest guest = new Guest();
+            guest.setFullName(client.getFirstName() + " " + client.getLastName());
+            guest.setQrToken(UUID.randomUUID().toString());
+            guest.setIsEntryValidated(false);
+            guest.setBooking(booking);
+            guestRepository.save(guest);
+        }
     }
 
 
@@ -208,7 +250,7 @@ public class BookingService {
             // saveAll es mucho más rápido que hacer un save() por cada reserva en un bucle
             bookingRepository.saveAll(expiredBookings);
 
-            System.out.println("Limpieza automática: Se cancelaron " + expiredBookings.size() + " reservas por falta de pago.");
+            log.info("Limpieza automática: {} reservas canceladas por falta de pago.", expiredBookings.size());
         }
     }
 

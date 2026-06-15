@@ -1,6 +1,5 @@
 package com.beachg.backend.services;
 
-import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceItemRequest;
@@ -24,9 +23,6 @@ public class MercadoPagoService {
     public String createPaymentPreference(String title, Double unitPrice, Integer quantity,
                                           String successUrl, String pendingUrl, String failureUrl,
                                           Long bookingId) {
-
-        // Configuramos el SDK global por si acaso
-        MercadoPagoConfig.setAccessToken(accessToken);
 
         // 1. Creamos el item
         PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()

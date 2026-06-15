@@ -4,111 +4,108 @@ import com.beachg.backend.dtos.booking.BookingRequest;
 import com.beachg.backend.dtos.booking.BookingResponse;
 import com.beachg.backend.services.BookingService;
 import com.beachg.backend.services.MercadoPagoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookings")
-@CrossOrigin("*")
 @RequiredArgsConstructor
+@Tag(name = "Reservas", description = "Creación, consulta y cancelación de reservas. Incluye callbacks de MercadoPago.")
+@SecurityRequirement(name = "bearerAuth")
 public class BookingController {
 
     private final BookingService bookingService;
-    private final MercadoPagoService mercadoPagoService; //  Inyectamos nuevo servicio
+    private final MercadoPagoService mercadoPagoService;
 
-    // 1. Crear una nueva reserva y generar link de pago (O confirmar directo si es presencial)
+    @Value("${NGROK_BASE_URL}")
+    private String baseUrl;
+
+    @Value("${FRONTEND_URL}")
+    private String frontendUrl;
+
     @PostMapping
+    @Operation(summary = "Crear reserva web", description = "Crea la reserva y devuelve la URL de pago de MercadoPago.")
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest request) {
-        // A. Creamos la reserva en tu BD
         BookingResponse booking = bookingService.createBooking(request);
-
-        // =======================================================
-        // INTERCEPCIÓN PARA RESERVAS PRESENCIALES (WALK-IN)
-        // =======================================================
-        if (request.isWalkIn() != null && request.isWalkIn()) {
-            // Si es en el mostrador, devolvemos el OK directo, sin link de pago.
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "message", "Reserva presencial confirmada correctamente. Código/s QR generados.",
-                    "booking", booking
-            ));
-        }
-
-        // =======================================================
-        // LÓGICA WEB NORMAL (MERCADO PAGO)
-        // =======================================================
-        // B. Definimos tu URL pública de ngrok
-        String baseUrl = "https://germicide-moistness-overhead.ngrok-free.dev";
-
-        // C. Generamos el link de pago pasándole las URLs y el ID de la reserva
         String paymentUrl = mercadoPagoService.createPaymentPreference(
-                "Reserva BeachG",
-                booking.totalPrice(),
-                1,
+                "Reserva BeachG", booking.totalPrice(), 1,
                 baseUrl + "/api/bookings/success",
                 baseUrl + "/api/bookings/pending",
                 baseUrl + "/api/bookings/failure",
-                booking.id() // <--- ACÁ LE PASAMOS EL ID AL SERVICIO
-        );
-
-        // D. Devolvemos un objeto que contiene tanto los datos de la reserva como el link de Mercado Pago
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                "booking", booking,
-                "paymentUrl", paymentUrl
-        ));
+                booking.id());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("booking", booking, "paymentUrl", paymentUrl));
     }
 
-    // 2. Ver todas las reservas (Para el Panel del Administrador)
+    @PostMapping("/walkin")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Crear reserva presencial (Admin)", description = "Crea y confirma automáticamente la reserva sin pasar por MercadoPago.")
+    public ResponseEntity<?> createWalkInBooking(@RequestBody BookingRequest request) {
+        BookingResponse booking = bookingService.createBooking(request);
+        bookingService.confirmBookingPayment(booking.id());
+        BookingResponse confirmed = bookingService.getBookingById(booking.id());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "message", "Reserva presencial confirmada. Código/s QR generados.", "booking", confirmed));
+    }
+
     @GetMapping
+    @Operation(summary = "Listar todas las reservas (Admin)")
     public ResponseEntity<List<BookingResponse>> getAllBookings() {
         return ResponseEntity.ok(bookingService.getAllBookings());
     }
 
-    // 3. Ver las reservas de un cliente específico (Para el Portal del Cliente)
     @GetMapping("/client/{clientId}")
+    @Operation(summary = "Reservas de un cliente")
     public ResponseEntity<List<BookingResponse>> getBookingsByClient(@PathVariable Long clientId) {
         return ResponseEntity.ok(bookingService.getBookingsByClientId(clientId));
     }
 
-    // 4. Ver el detalle de una reserva específica por su ID
     @GetMapping("/{id}")
+    @Operation(summary = "Detalle de una reserva")
     public ResponseEntity<BookingResponse> getBookingById(@PathVariable Long id) {
         return ResponseEntity.ok(bookingService.getBookingById(id));
     }
 
-    // ==========================================
-    // ENDPOINTS DE RETORNO DE MERCADO PAGO
-    // ==========================================
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/{id}/cancel")
+    @Operation(summary = "Cancelar reserva (Admin)")
+    public ResponseEntity<BookingResponse> cancelBooking(@PathVariable Long id) {
+        return ResponseEntity.ok(bookingService.cancelBooking(id));
+    }
+
+    // ── Callbacks MercadoPago ────────────────────────────────────────────────
 
     @GetMapping("/success")
-    public String handleSuccess(
+    @Operation(summary = "Callback pago exitoso (MercadoPago)", description = "Confirma la reserva y redirige al frontend.")
+    public void handleSuccess(
             @RequestParam("collection_id") String collectionId,
             @RequestParam("status") String mpStatus,
-            @RequestParam("external_reference") String externalReference) { // <--- ATRAPAMOS EL POST-IT
-
-        // 1. Convertimos el ID que mandó Mercado Pago a un Long
-        Long bookingId = Long.parseLong(externalReference);
-
-        // 2. Le avisamos a tu BD que la reserva está pagada
-        bookingService.confirmBookingPayment(bookingId);
-
-        // 3. Devolvemos el mensaje triunfal
-        return "¡Genial! El pago se acreditó correctamente. La reserva #" + bookingId + " ya está confirmada. ID Mercado Pago: " + collectionId;
+            @RequestParam("external_reference") String externalReference,
+            HttpServletResponse response) throws IOException {
+        bookingService.confirmBookingPayment(Long.parseLong(externalReference));
+        response.sendRedirect(frontendUrl + "/payment/success?bookingId=" + externalReference);
     }
 
     @GetMapping("/pending")
-    public String handlePending() {
-        // Mercado Pago redirige acá si pagaron en efectivo (Ej: PagoFácil)
-        return "El pago está pendiente. Te avisaremos cuando se acredite el dinero.";
+    @Operation(summary = "Callback pago pendiente (MercadoPago)")
+    public void handlePending(HttpServletResponse response) throws IOException {
+        response.sendRedirect(frontendUrl + "/payment/pending");
     }
 
     @GetMapping("/failure")
-    public String handleFailure() {
-        // Mercado Pago redirige acá si la tarjeta sin fondos
-        return "El pago fue rechazado. Por favor, intentá nuevamente con otro método de pago.";
+    @Operation(summary = "Callback pago fallido (MercadoPago)")
+    public void handleFailure(HttpServletResponse response) throws IOException {
+        response.sendRedirect(frontendUrl + "/payment/failure");
     }
 }

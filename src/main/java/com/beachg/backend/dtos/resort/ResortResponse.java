@@ -11,6 +11,7 @@ public record ResortResponse(
         String location,
         String adminEmail,
         String coverPhotoUrl,
+        String description,
         List<AmenityResponse> amenities,
         List<RentalUnitResponse> rentalUnits
 ) {

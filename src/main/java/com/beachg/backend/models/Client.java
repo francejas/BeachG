@@ -23,6 +23,9 @@ public class Client {
 
     private String phone;
 
+    @Column(nullable = false)
+    private String role = "USER";  // "USER" o "ADMIN"
+
     // Relación bidireccional: Un cliente puede tener muchas reservas.
     // "mappedBy" le avisa a Spring Boot que la clave foránea ya se maneja en la clase Booking.
     @OneToMany(mappedBy = "client")

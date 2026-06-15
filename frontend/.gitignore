@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-ssr
+*.local
+.vite
+
+# Screenshots de prueba
+landing.png
+login.png
+*.screenshot.png

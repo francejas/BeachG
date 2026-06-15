@@ -59,7 +59,9 @@ public class ClientService {
         saved.setFirstName(request.firstName());
         saved.setLastName(request.lastName());
         saved.setEmail(request.email());
-        saved.setPasswordHash(passwordEncoder.encode(request.password()));
+        if (request.password() != null && !request.password().isBlank()) {
+            saved.setPasswordHash(passwordEncoder.encode(request.password()));
+        }
         saved.setPhone(request.phone());
 
         return mapToResponse(clientRepository.save(saved));
