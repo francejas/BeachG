@@ -3,10 +3,14 @@ import axios from "axios"
 export const TOKEN_KEY = "beachg_token"
 export const CLIENT_ID_KEY = "beachg_client_id"
 
-const baseURL = import.meta.env.VITE_API_URL || "http://localhost:8080"
+const baseURL = (import.meta.env.VITE_API_URL || "http://localhost:8080").trim().replace(/\/$/, "")
 
 export const api = axios.create({
   baseURL,
+  headers: {
+    // Evita la pantalla de advertencia de ngrok que devuelve HTML en vez de JSON
+    "ngrok-skip-browser-warning": "true",
+  },
 })
 
 api.interceptors.request.use((config) => {
