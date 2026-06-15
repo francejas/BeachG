@@ -24,6 +24,9 @@ public class Resort {
 
     private String coverPhotoUrl;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     @OneToMany(mappedBy = "resort")
     private List<RentalUnit> rentalUnits;
 

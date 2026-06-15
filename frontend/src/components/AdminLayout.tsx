@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom"
-import { LayoutDashboard, LogOut, ScrollText, Store, Umbrella, UserPlus } from "lucide-react"
+import { LayoutDashboard, LogOut, QrCode, ScrollText, Store, Umbrella, UserPlus } from "lucide-react"
 import { useAuth } from "@/lib/auth"
 import { cn } from "@/lib/utils"
 
@@ -9,6 +9,7 @@ const navItems = [
   { to: "/admin/units", label: "Unidades", icon: Umbrella, end: false },
   { to: "/admin/walkin", label: "Reserva presencial", icon: UserPlus, end: false },
   { to: "/admin/bookings", label: "Todas las reservas", icon: ScrollText, end: false },
+  { to: "/admin/validate", label: "Validar QR", icon: QrCode, end: false },
 ]
 
 export function AdminLayout() {

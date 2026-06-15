@@ -38,7 +38,7 @@ export function useMyResort(enabled = true) {
 export function useUpdateMyResort() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: async (payload: { name: string; location: string; coverPhotoUrl: string; amenityIds: number[] }) =>
+    mutationFn: async (payload: { name: string; location: string; coverPhotoUrl: string; description: string; amenityIds: number[] }) =>
       (await api.put("/api/resorts/my", payload)).data,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["my-resort"] })
@@ -128,6 +128,14 @@ export function useCreateBooking() {
   })
 }
 
+export function useCancelBooking() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: number) => (await api.patch<Booking>(`/api/bookings/${id}/cancel`)).data,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["bookings"] }),
+  })
+}
+
 export function useCreateWalkIn() {
   const qc = useQueryClient()
   return useMutation({
@@ -146,7 +154,35 @@ export function useClient(id: number | null) {
   })
 }
 
+export function useUpdateClient() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({
+      id,
+      firstName,
+      lastName,
+      email,
+      phone,
+      password,
+    }: {
+      id: number
+      firstName: string
+      lastName: string
+      email: string
+      phone: string
+      password?: string
+    }) => (await api.put<Client>(`/api/clients/${id}`, { firstName, lastName, email, phone, password: password ?? null })).data,
+    onSuccess: (_data, vars) => {
+      qc.invalidateQueries({ queryKey: ["client", vars.id] })
+    },
+  })
+}
+
 // ---------- Guest validation ----------
 export async function validateGuest(token: string): Promise<GuestValidationResponse> {
   return (await api.post<GuestValidationResponse>(`/api/guests/validate/${encodeURIComponent(token)}`)).data
+}
+
+export async function validateGuestByDni(dni: string): Promise<GuestValidationResponse> {
+  return (await api.post<GuestValidationResponse>(`/api/guests/validate/dni/${encodeURIComponent(dni)}`)).data
 }

@@ -46,6 +46,7 @@ public class ResortService {
         resort.setAdminEmail(request.adminEmail());
         resort.setPasswordHash(request.password());
         resort.setCoverPhotoUrl(request.coverPhotoUrl());
+        resort.setDescription(request.description());
         resort.setActive(true);
 
         // Buscar y asignar amenities si enviaron la lista de IDs (notar que usamos request.amenityIds())
@@ -65,6 +66,7 @@ public class ResortService {
         resort.setLocation(request.location());
         resort.setAdminEmail(request.adminEmail());
         resort.setCoverPhotoUrl(request.coverPhotoUrl());
+        resort.setDescription(request.description());
 
         if (request.amenityIds() != null) {
             List<Amenity> amenities = amenityRepository.findAllById(request.amenityIds());
@@ -86,6 +88,7 @@ public class ResortService {
         resort.setName(request.name());
         resort.setLocation(request.location());
         resort.setCoverPhotoUrl(request.coverPhotoUrl());
+        resort.setDescription(request.description());
 
         if (request.amenityIds() != null) {
             List<Amenity> amenities = amenityRepository.findAllById(request.amenityIds());
@@ -123,6 +126,7 @@ public class ResortService {
                 r.getLocation(),
                 r.getAdminEmail(),
                 r.getCoverPhotoUrl(),
+                r.getDescription(),
                 amenities,
                 units
         );

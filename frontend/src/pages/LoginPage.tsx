@@ -24,7 +24,7 @@ export function LoginPage() {
     try {
       const role = await login(email, password)
       if (role === "ADMIN") navigate("/admin", { replace: true })
-      else navigate(from ?? "/my-bookings", { replace: true })
+      else navigate(from ?? "/dashboard", { replace: true })
     } catch (err) {
       setError(getApiErrorMessage(err, "Email o contraseña incorrectos."))
     } finally {

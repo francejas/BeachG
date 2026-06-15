@@ -20,6 +20,7 @@ export interface Resort {
   location: string
   adminEmail: string
   coverPhotoUrl: string
+  description?: string | null
   amenities: Amenity[]
   rentalUnits: RentalUnit[]
 }
@@ -43,6 +44,10 @@ export interface Booking {
   guests: GuestSummary[]
   walkInName?: string | null
   walkInDni?: string | null
+  resortId?: number | null
+  resortName?: string | null
+  resortLocation?: string | null
+  resortCoverPhotoUrl?: string | null
 }
 
 export interface BookingSummary {

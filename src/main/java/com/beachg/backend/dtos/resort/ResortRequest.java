@@ -8,6 +8,7 @@ public record ResortRequest(
         String adminEmail,
         String password,
         String coverPhotoUrl,
+        String description,
         List<Long> amenityIds
 ) {
 }

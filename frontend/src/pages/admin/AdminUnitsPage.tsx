@@ -83,14 +83,13 @@ export default function AdminUnitsPage() {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="price">Precio diario</Label>
+                <Label htmlFor="price">Precio diario ($)</Label>
                 <Input
                   id="price"
-                  type="number"
-                  min="0"
+                  inputMode="numeric"
                   value={dailyPrice}
-                  onChange={(e) => setDailyPrice(e.target.value)}
-                  placeholder="0"
+                  onChange={(e) => setDailyPrice(e.target.value.replace(/[^0-9]/g, ""))}
+                  placeholder="Ej: 5000"
                   required
                 />
               </div>
@@ -156,13 +155,12 @@ function UnitCard({
         {editing ? (
           <div className="flex items-end gap-2">
             <div className="flex-1">
-              <Label htmlFor={`price-${unit.idRentalUnit}`}>Precio diario</Label>
+              <Label htmlFor={`price-${unit.idRentalUnit}`}>Precio diario ($)</Label>
               <Input
                 id={`price-${unit.idRentalUnit}`}
-                type="number"
-                min="0"
+                inputMode="numeric"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => setPrice(e.target.value.replace(/[^0-9]/g, ""))}
               />
             </div>
             <Button size="sm" onClick={savePrice} loading={updatePrice.isPending}>

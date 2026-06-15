@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react"
+import { FormEvent, useEffect, useMemo, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { ArrowLeft, CalendarDays, CreditCard, Plus, Tent, Trash2, Umbrella, Users } from "lucide-react"
 import { useResort, useCreateBooking } from "@/lib/queries"
@@ -19,8 +19,21 @@ export function BookingPage() {
   const [rentalUnitId, setRentalUnitId] = useState<number | "">("")
   const [startDate, setStartDate] = useState(todayISO())
   const [endDate, setEndDate] = useState(addDaysISO(todayISO(), 1))
-  const [guestNames, setGuestNames] = useState<string[]>([""])
+  const [guestNames, setGuestNames] = useState<string[]>([])
   const [submitError, setSubmitError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!resortId) return
+    const pending = sessionStorage.getItem(`beachg_unit_${resortId}`)
+    if (pending) {
+      try {
+        const { unitId, type } = JSON.parse(pending)
+        setUnitType(type)
+        setRentalUnitId(unitId)
+      } catch {}
+      sessionStorage.removeItem(`beachg_unit_${resortId}`)
+    }
+  }, [resortId])
 
   const availableUnits = useMemo(
     () => resort?.rentalUnits?.filter((u) => !u.isBlocked && u.type === unitType) ?? [],
@@ -55,7 +68,6 @@ export function BookingPage() {
     if (!rentalUnitId) return setSubmitError("Elegí una unidad disponible.")
     if (endDate < startDate) return setSubmitError("La fecha de salida debe ser posterior a la de entrada.")
     const names = guestNames.map((n) => n.trim()).filter(Boolean)
-    if (names.length === 0) return setSubmitError("Ingresá al menos un huésped.")
 
     try {
       const result = await createBooking.mutateAsync({
@@ -66,7 +78,8 @@ export function BookingPage() {
         guestNames: names,
       })
       if (result.paymentUrl) {
-        window.location.href = result.paymentUrl
+        window.open(result.paymentUrl, "_blank", "noopener,noreferrer")
+        navigate("/my-bookings")
       } else {
         navigate("/my-bookings")
       }
@@ -158,18 +171,16 @@ export function BookingPage() {
           {/* Guests */}
           <Card className="p-6">
             <h2 className="mb-4 flex items-center gap-2 font-bold">
-              <Users className="h-5 w-5 text-primary" /> Huéspedes
+              <Users className="h-5 w-5 text-primary" /> Huéspedes <span className="text-sm font-normal text-muted-foreground">(opcional)</span>
             </h2>
             <p className="mb-3 text-sm text-muted-foreground">Cada huésped recibirá su propio código QR de ingreso.</p>
             <div className="space-y-2">
               {guestNames.map((name, i) => (
                 <div key={i} className="flex gap-2">
                   <Input placeholder={`Nombre del huésped ${i + 1}`} value={name} onChange={(e) => updateGuest(i, e.target.value)} />
-                  {guestNames.length > 1 && (
-                    <Button type="button" variant="outline" size="icon" onClick={() => setGuestNames((g) => g.filter((_, idx) => idx !== i))} aria-label="Quitar huésped">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
+                  <Button type="button" variant="outline" size="icon" onClick={() => setGuestNames((g) => g.filter((_, idx) => idx !== i))} aria-label="Quitar huésped">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               ))}
             </div>

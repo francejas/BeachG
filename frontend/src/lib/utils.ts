@@ -22,7 +22,7 @@ export function formatDate(date: string | undefined | null): string {
   const dt = new Date(y, m - 1, d)
   return dt.toLocaleDateString("es-AR", {
     day: "2-digit",
-    month: "short",
+    month: "long",
     year: "numeric",
   })
 }

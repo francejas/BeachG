@@ -3,7 +3,7 @@ import { Check, MapPin, Save } from "lucide-react"
 import { useAmenities, useMyResort, useUpdateMyResort } from "@/lib/queries"
 import { getApiErrorMessage } from "@/lib/api"
 import { amenityIcon, resortCover } from "@/components/resort-helpers"
-import { Button, Card, CardBody, ErrorState, Input, Label, Loading } from "@/components/ui"
+import { Button, Card, CardBody, ErrorState, Input, Label, Loading, Textarea } from "@/components/ui"
 import { cn } from "@/lib/utils"
 
 export default function AdminResortPage() {
@@ -14,6 +14,7 @@ export default function AdminResortPage() {
   const [name, setName] = useState("")
   const [location, setLocation] = useState("")
   const [coverPhotoUrl, setCoverPhotoUrl] = useState("")
+  const [description, setDescription] = useState("")
   const [selectedAmenities, setSelectedAmenities] = useState<number[]>([])
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null)
 
@@ -22,6 +23,7 @@ export default function AdminResortPage() {
       setName(resort.name)
       setLocation(resort.location)
       setCoverPhotoUrl(resort.coverPhotoUrl ?? "")
+      setDescription(resort.description ?? "")
       setSelectedAmenities(resort.amenities.map((a) => a.idAmenity))
     }
   }, [resort])
@@ -37,7 +39,7 @@ export default function AdminResortPage() {
     e.preventDefault()
     setFeedback(null)
     try {
-      await updateResort.mutateAsync({ name, location, coverPhotoUrl, amenityIds: selectedAmenities })
+      await updateResort.mutateAsync({ name, location, coverPhotoUrl, description, amenityIds: selectedAmenities })
       setFeedback({ type: "success", msg: "Cambios guardados correctamente." })
     } catch (err) {
       setFeedback({ type: "error", msg: getApiErrorMessage(err) })
@@ -70,6 +72,16 @@ export default function AdminResortPage() {
                   value={coverPhotoUrl}
                   onChange={(e) => setCoverPhotoUrl(e.target.value)}
                   placeholder="https://..."
+                />
+              </div>
+              <div>
+                <Label htmlFor="description">Descripción</Label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Contale a tus clientes de qué se trata tu balneario..."
+                  rows={4}
                 />
               </div>
 

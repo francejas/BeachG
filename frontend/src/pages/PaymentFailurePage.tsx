@@ -1,16 +1,16 @@
 import { Link } from "react-router-dom"
-import { CheckCircle2 } from "lucide-react"
+import { XCircle } from "lucide-react"
 import { Button } from "@/components/ui"
 
-export function PaymentSuccessPage() {
+export function PaymentFailurePage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 text-center">
-      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-green-600">
-        <CheckCircle2 className="h-10 w-10" />
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-100 text-red-600">
+        <XCircle className="h-10 w-10" />
       </div>
-      <h1 className="mt-6 text-3xl font-extrabold">¡Pago confirmado!</h1>
+      <h1 className="mt-6 text-3xl font-extrabold">Pago rechazado</h1>
       <p className="mt-3 max-w-sm text-muted-foreground">
-        Tu reserva quedó confirmada. Ya podés ver tus códigos QR de ingreso desde tu lista de reservas.
+        El pago no pudo procesarse. Por favor, intentá nuevamente con otro método de pago.
       </p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Link to="/my-bookings">

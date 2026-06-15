@@ -13,10 +13,15 @@ public class GuestController {
 
     private final GuestService guestService;
 
-    // Recibe el token directamente por la URL: /api/guests/validate/GUEST-1234
     @PostMapping("/validate/{token}")
     public ResponseEntity<GuestValidationResponse> validateGuestEntry(@PathVariable String token) {
         GuestValidationResponse response = guestService.validateGuestEntry(token);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/validate/dni/{dni}")
+    public ResponseEntity<GuestValidationResponse> validateGuestEntryByDni(@PathVariable String dni) {
+        GuestValidationResponse response = guestService.validateGuestEntryByDni(dni);
         return ResponseEntity.ok(response);
     }
 }
