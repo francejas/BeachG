@@ -1,8 +1,9 @@
 import type { ReactNode } from "react"
-import { Link } from "react-router-dom"
-import { Umbrella } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
+import { ArrowLeft, Umbrella } from "lucide-react"
 
 export function AuthShell({ title, subtitle, children }: { title: string; subtitle: string; children: ReactNode }) {
+  const navigate = useNavigate()
   return (
     <div className="flex min-h-screen">
       {/* Visual side */}
@@ -36,6 +37,12 @@ export function AuthShell({ title, subtitle, children }: { title: string; subtit
             </span>
             Beach<span className="-ml-1.5 text-primary">G</span>
           </Link>
+          <button
+            onClick={() => navigate(-1)}
+            className="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" /> Volver
+          </button>
           <h1 className="text-2xl font-extrabold">{title}</h1>
           <p className="mt-1 mb-6 text-muted-foreground">{subtitle}</p>
           {children}
