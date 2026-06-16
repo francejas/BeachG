@@ -10,6 +10,7 @@ import { formatCurrency, formatDate, todayISO } from "@/lib/utils"
 export function BookingDetailPage() {
   const { id } = useParams()
   const { data: booking, isLoading, error } = useBooking(id)
+  const retryPayment = useRetryPayment()
 
   if (isLoading) return <Loading label="Cargando reserva..." />
   if (error || !booking)
@@ -18,8 +19,6 @@ export function BookingDetailPage() {
         <ErrorState message={getApiErrorMessage(error, "No encontramos esta reserva.")} />
       </div>
     )
-
-  const retryPayment = useRetryPayment()
   const isConfirmed = booking.status === "CONFIRMED"
   const isPending = booking.status === "PENDING"
   const today = todayISO()
