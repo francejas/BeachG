@@ -50,7 +50,7 @@ export function LoginPage() {
       </form>
       <p className="mt-6 text-center text-sm text-muted-foreground">
         ¿No tenés cuenta?{" "}
-        <Link to="/register" className="font-semibold text-primary hover:underline">
+        <Link to="/register" state={from ? { from } : undefined} className="font-semibold text-primary hover:underline">
           Registrate
         </Link>
       </p>
