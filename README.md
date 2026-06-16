@@ -1,4 +1,4 @@
-# BeachG
+# 🏖️ BeachG
 
 **Sistema de gestión y reservas para balnearios**  
 Proyecto académico · Programación 3 · Universidad Tecnológica Nacional (UTN)
@@ -11,27 +11,16 @@ BeachG es una plataforma completa para la administración de balnearios y la res
 
 ---
 
-## Demo
+## 🌐 Demo
 
 | Recurso | URL |
 |---|---|
 | Frontend (producción) | [beach-g.vercel.app](https://beach-g.vercel.app) |
 | API Swagger | [germicide-moistness-overhead.ngrok-free.dev/swagger-ui/index.html](https://germicide-moistness-overhead.ngrok-free.dev/swagger-ui/index.html) |
 
-### Credenciales de prueba
-
-| Rol | Email | Contraseña |
-|---|---|---|
-| Admin (Mar del Plata) | `admin.mdp@beachg.com` | `admin123` |
-| Admin (Pinamar) | `admin.pinamar@beachg.com` | `admin123` |
-| Admin (Gesell) | `admin.gesell@beachg.com` | `admin123` |
-| Admin (Miramar) | `admin.miramar@beachg.com` | `admin123` |
-| Admin (Necochea) | `admin.necochea@beachg.com` | `admin123` |
-| Usuario | `santi.rodriguez@gmail.com` | `admin123` |
-
 ---
 
-## Características
+## ✨ Características
 
 ### Para clientes
 - Exploración de balnearios con filtros por ciudad y nombre
@@ -51,7 +40,7 @@ BeachG es una plataforma completa para la administración de balnearios y la res
 
 ---
 
-## Stack tecnológico
+## 🛠️ Stack tecnológico
 
 ### Backend
 | Tecnología | Versión | Rol |
@@ -79,7 +68,7 @@ BeachG es una plataforma completa para la administración de balnearios y la res
 | Lucide React | — | Iconografía |
 | Nominatim + Open-Meteo | — | Geocodificación y clima (sin API key) |
 
-### Infraestructura (producción)
+### ☁️ Infraestructura (producción)
 | Servicio | Tecnología |
 |---|---|
 | Frontend | Vercel |
@@ -89,7 +78,7 @@ BeachG es una plataforma completa para la administración de balnearios y la res
 
 ---
 
-## Arquitectura
+## 🏗️ Arquitectura
 
 ### Desarrollo local
 ```
@@ -135,7 +124,7 @@ BeachG es una plataforma completa para la administración de balnearios y la res
 
 ---
 
-## Flujo de reserva
+## 💳 Flujo de reserva
 
 ```
 Cliente selecciona balneario
@@ -164,7 +153,7 @@ Ingreso validado ✓
 
 ---
 
-## Endpoints de la API
+## 📡 Endpoints de la API
 
 Con el backend corriendo, la documentación interactiva está en:
 ```
@@ -207,7 +196,7 @@ El JWT se obtiene con `POST /api/auth/login` y lleva el rol (`USER` o `ADMIN`) e
 
 ---
 
-## Instalación y desarrollo local
+## 🚀 Instalación y desarrollo local
 
 ### Prerrequisitos
 
@@ -279,20 +268,19 @@ ngrok http 8080
 
 ---
 
-## Despliegue en producción
+## ☁️ Despliegue en producción
 
 ### Backend en AWS EC2
 
 ```bash
 # Conectarse al servidor
-ssh -i clave-beachg.pem ubuntu@<IP_EC2>
+ssh -i clave.pem ubuntu@<IP_EC2>
 
 # Clonar e instalar
 git clone https://github.com/francejas/BeachG.git
 cd BeachG
 
-# Crear .env con variables de producción
-# Levantar contenedores
+# Crear .env con variables de producción y levantar contenedores
 sudo docker compose up --build -d
 
 # ngrok (mantener corriendo con nohup)
@@ -313,7 +301,7 @@ Configurar en Vercel:
 
 ---
 
-## Estructura del proyecto
+## 📁 Estructura del proyecto
 
 ```
 BeachG/
@@ -364,7 +352,7 @@ BeachG/
 
 ---
 
-## Roles y permisos
+## 🔐 Roles y permisos
 
 | Rol | Acceso |
 |---|---|
@@ -376,7 +364,7 @@ Un admin solo puede gestionar **su propio balneario** (el asignado en la base de
 
 ---
 
-## Variables de entorno — referencia
+## ⚙️ Variables de entorno — referencia
 
 | Variable | Descripción |
 |---|---|
@@ -387,7 +375,7 @@ Un admin solo puede gestionar **su propio balneario** (el asignado en la base de
 
 ---
 
-## Equipo
+## 👥 Equipo
 
 | Integrante | GitHub |
 |---|---|
@@ -398,4 +386,4 @@ Un admin solo puede gestionar **su propio balneario** (el asignado en la base de
 
 ---
 
-Proyecto académico · Programación 3 · UTN
+Proyecto académico · Programación 3 · UTN 🎓
