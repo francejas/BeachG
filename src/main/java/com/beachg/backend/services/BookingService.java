@@ -73,6 +73,16 @@ public class BookingService {
         // CREACIÓN DE GUESTS
         List<Guest> invitadosGuardados = new ArrayList<>();
 
+        // El cliente registrado siempre obtiene su propio QR
+        if (client != null) {
+            Guest clientGuest = new Guest();
+            clientGuest.setFullName(client.getFirstName() + " " + client.getLastName());
+            clientGuest.setQrToken(UUID.randomUUID().toString());
+            clientGuest.setIsEntryValidated(false);
+            clientGuest.setBooking(savedBooking);
+            invitadosGuardados.add(guestRepository.save(clientGuest));
+        }
+
         if (request.guestNames() != null && !request.guestNames().isEmpty()) {
             for (String guestName : request.guestNames()) {
                 Guest guest = new Guest();
@@ -82,16 +92,6 @@ public class BookingService {
                 guest.setBooking(savedBooking);
                 invitadosGuardados.add(guestRepository.save(guest));
             }
-        }
-
-        // Si no se especificaron huéspedes y hay cliente registrado, crear QR por defecto
-        if (invitadosGuardados.isEmpty() && client != null) {
-            Guest guest = new Guest();
-            guest.setFullName(client.getFirstName() + " " + client.getLastName());
-            guest.setQrToken(UUID.randomUUID().toString());
-            guest.setIsEntryValidated(false);
-            guest.setBooking(savedBooking);
-            invitadosGuardados.add(guestRepository.save(guest));
         }
 
         // Mapeo de la respuesta final al DTO
