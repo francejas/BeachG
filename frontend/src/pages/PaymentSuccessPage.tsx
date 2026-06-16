@@ -94,7 +94,7 @@ export function PaymentSuccessPage() {
           </Link>
         )}
         <Link to="/my-bookings" className="flex-1">
-          <Button size="lg" variant={bookingId ? "outline" : "default"} className="w-full">
+          <Button size="lg" variant={bookingId ? "outline" : "primary"} className="w-full">
             Mis reservas
           </Button>
         </Link>
