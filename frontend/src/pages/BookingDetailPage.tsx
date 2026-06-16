@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom"
-import { ArrowLeft, CalendarDays, Clock, ExternalLink, MapPin, Printer, QrCode } from "lucide-react"
-import { useBooking } from "@/lib/queries"
+import { ArrowLeft, CalendarDays, Clock, CreditCard, ExternalLink, MapPin, Printer, QrCode } from "lucide-react"
+import { useBooking, useRetryPayment } from "@/lib/queries"
 import { getApiErrorMessage } from "@/lib/api"
 import { Button, Card, ErrorState, Loading, StatusBadge } from "@/components/ui"
 import { GuestQR } from "@/components/GuestQR"
@@ -19,7 +19,9 @@ export function BookingDetailPage() {
       </div>
     )
 
+  const retryPayment = useRetryPayment()
   const isConfirmed = booking.status === "CONFIRMED"
+  const isPending = booking.status === "PENDING"
   const today = todayISO()
   const qrAvailable = today >= String(booking.startDate)
   const isExpired = String(booking.endDate) < today
@@ -72,11 +74,26 @@ export function BookingDetailPage() {
           </div>
           <p className="mt-1 text-muted-foreground">Creada el {formatDate(booking.createdAt?.slice(0, 10))}</p>
         </div>
-        {isConfirmed && (
-          <Button variant="outline" onClick={() => window.print()} className="print:hidden">
-            <Printer className="h-4 w-4" /> Imprimir QR
-          </Button>
-        )}
+        <div className="flex gap-2 print:hidden">
+          {isPending && (
+            <Button
+              variant="primary"
+              loading={retryPayment.isPending}
+              onClick={() =>
+                retryPayment.mutate(booking.id, {
+                  onSuccess: (data) => window.open(data.paymentUrl, "_blank", "noopener,noreferrer"),
+                })
+              }
+            >
+              <CreditCard className="h-4 w-4" /> Pagar ahora
+            </Button>
+          )}
+          {isConfirmed && (
+            <Button variant="outline" onClick={() => window.print()}>
+              <Printer className="h-4 w-4" /> Imprimir QR
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-4 print:hidden">

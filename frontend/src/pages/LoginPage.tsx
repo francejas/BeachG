@@ -1,6 +1,5 @@
 import { FormEvent, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { Umbrella } from "lucide-react"
 import { useAuth } from "@/lib/auth"
 import { getApiErrorMessage } from "@/lib/api"
 import { Button, Input, Label } from "@/components/ui"
@@ -50,12 +49,9 @@ export function LoginPage() {
       </form>
       <p className="mt-6 text-center text-sm text-muted-foreground">
         ¿No tenés cuenta?{" "}
-        <Link to="/register" className="font-semibold text-primary hover:underline">
+        <Link to="/register" state={from ? { from } : undefined} className="font-semibold text-primary hover:underline">
           Registrate
         </Link>
-      </p>
-      <p className="mt-2 text-center text-xs text-muted-foreground">
-        <Umbrella className="mr-1 inline h-3 w-3" /> Demo: admin.mdp@beachg.com / santi.rodriguez@gmail.com · contraseña: admin123
       </p>
     </AuthShell>
   )

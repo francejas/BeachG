@@ -128,6 +128,13 @@ export function useCreateBooking() {
   })
 }
 
+export function useRetryPayment() {
+  return useMutation({
+    mutationFn: async (id: number) =>
+      (await api.post<{ paymentUrl: string }>(`/api/bookings/${id}/pay`)).data,
+  })
+}
+
 export function useCancelBooking() {
   const qc = useQueryClient()
   return useMutation({

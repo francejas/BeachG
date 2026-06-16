@@ -8,3 +8,4 @@ dist-ssr
 landing.png
 login.png
 *.screenshot.png
+.vercel

@@ -48,6 +48,22 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("booking", booking, "paymentUrl", paymentUrl));
     }
 
+    @PostMapping("/{id}/pay")
+    @Operation(summary = "Reintentar pago (reserva pendiente)", description = "Genera una nueva URL de MercadoPago para una reserva PENDING existente.")
+    public ResponseEntity<?> retryPayment(@PathVariable Long id) {
+        BookingResponse booking = bookingService.getBookingById(id);
+        if (!booking.status().name().equals("PENDING")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "La reserva no está pendiente de pago."));
+        }
+        String paymentUrl = mercadoPagoService.createPaymentPreference(
+                "Reserva BeachG", booking.totalPrice(), 1,
+                baseUrl + "/api/bookings/success",
+                baseUrl + "/api/bookings/pending",
+                baseUrl + "/api/bookings/failure",
+                booking.id());
+        return ResponseEntity.ok(Map.of("paymentUrl", paymentUrl));
+    }
+
     @PostMapping("/walkin")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear reserva presencial (Admin)", description = "Crea y confirma automáticamente la reserva sin pasar por MercadoPago.")

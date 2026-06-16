@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { api, getApiErrorMessage } from "@/lib/api"
 import { useAuth } from "@/lib/auth"
 import { Button, Input, Label } from "@/components/ui"
@@ -7,6 +7,8 @@ import { AuthShell } from "@/components/AuthShell"
 
 export function RegisterPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const from = (location.state as { from?: string } | null)?.from
   const { login } = useAuth()
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", password: "" })
   const [error, setError] = useState<string | null>(null)
@@ -23,7 +25,7 @@ export function RegisterPage() {
     try {
       await api.post("/api/clients", form)
       await login(form.email, form.password)
-      navigate("/my-bookings", { replace: true })
+      navigate(from ?? "/dashboard", { replace: true })
     } catch (err) {
       setError(getApiErrorMessage(err, "No pudimos crear tu cuenta. Revisá los datos."))
     } finally {
@@ -63,7 +65,7 @@ export function RegisterPage() {
       </form>
       <p className="mt-6 text-center text-sm text-muted-foreground">
         ¿Ya tenés cuenta?{" "}
-        <Link to="/login" className="font-semibold text-primary hover:underline">
+        <Link to="/login" state={from ? { from } : undefined} className="font-semibold text-primary hover:underline">
           Ingresá
         </Link>
       </p>
