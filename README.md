@@ -16,8 +16,7 @@ BeachG es una plataforma completa para la administración de balnearios y la res
 | Recurso | URL |
 |---|---|
 | Frontend (producción) | [beach-g.vercel.app](https://beach-g.vercel.app) |
-| API Swagger (local) | [localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html) |
-| API Swagger (producción) | `<NGROK_BASE_URL>/swagger-ui/index.html` |
+| API Swagger | [germicide-moistness-overhead.ngrok-free.dev/swagger-ui/index.html](https://germicide-moistness-overhead.ngrok-free.dev/swagger-ui/index.html) |
 
 ---
 
@@ -158,8 +157,7 @@ Ingreso validado ✓
 
 Con el backend corriendo, la documentación interactiva está en:
 ```
-http://localhost:8080/swagger-ui/index.html   # local
-<NGROK_BASE_URL>/swagger-ui/index.html        # producción
+https://germicide-moistness-overhead.ngrok-free.dev/swagger-ui/index.html
 ```
 
 ### Referencia rápida
