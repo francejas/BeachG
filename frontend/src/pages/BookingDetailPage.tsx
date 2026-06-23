@@ -1,6 +1,7 @@
-import { Link, useParams } from "react-router-dom"
-import { ArrowLeft, CalendarDays, Clock, CreditCard, ExternalLink, MapPin, Printer, QrCode } from "lucide-react"
-import { useBooking, useRetryPayment } from "@/lib/queries"
+import { useState } from "react"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import { ArrowLeft, CalendarDays, Clock, CreditCard, ExternalLink, MapPin, Printer, QrCode, XCircle } from "lucide-react"
+import { useBooking, useCancelBooking, useRetryPayment } from "@/lib/queries"
 import { getApiErrorMessage } from "@/lib/api"
 import { Button, Card, ErrorState, Loading, StatusBadge } from "@/components/ui"
 import { GuestQR } from "@/components/GuestQR"
@@ -9,8 +10,11 @@ import { formatCurrency, formatDate, todayISO } from "@/lib/utils"
 
 export function BookingDetailPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const { data: booking, isLoading, error } = useBooking(id)
   const retryPayment = useRetryPayment()
+  const cancelBooking = useCancelBooking()
+  const [cancelConfirm, setCancelConfirm] = useState(false)
 
   if (isLoading) return <Loading label="Cargando reserva..." />
   if (error || !booking)
@@ -21,6 +25,7 @@ export function BookingDetailPage() {
     )
   const isConfirmed = booking.status === "CONFIRMED"
   const isPending = booking.status === "PENDING"
+  const isCanceled = booking.status === "CANCELED"
   const today = todayISO()
   const qrAvailable = today >= String(booking.startDate)
   const isExpired = String(booking.endDate) < today
@@ -91,6 +96,31 @@ export function BookingDetailPage() {
             <Button variant="outline" onClick={() => window.print()}>
               <Printer className="h-4 w-4" /> Imprimir QR
             </Button>
+          )}
+          {!isCanceled && !isExpired && (
+            cancelConfirm ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">¿Confirmar cancelación?</span>
+                <Button
+                  variant="destructive"
+                  loading={cancelBooking.isPending}
+                  onClick={() =>
+                    cancelBooking.mutate(booking.id, {
+                      onSuccess: () => navigate("/my-bookings"),
+                    })
+                  }
+                >
+                  Sí, cancelar
+                </Button>
+                <Button variant="outline" onClick={() => setCancelConfirm(false)}>
+                  No
+                </Button>
+              </div>
+            ) : (
+              <Button variant="outline" onClick={() => setCancelConfirm(true)}>
+                <XCircle className="h-4 w-4" /> Cancelar reserva
+              </Button>
+            )
           )}
         </div>
       </div>

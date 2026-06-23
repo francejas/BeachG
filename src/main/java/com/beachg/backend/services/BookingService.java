@@ -4,6 +4,7 @@ package com.beachg.backend.services;
 import com.beachg.backend.dtos.booking.BookingRequest;
 import com.beachg.backend.dtos.booking.BookingResponse;
 import com.beachg.backend.dtos.guest.GuestSummaryResponse;
+import com.beachg.backend.exceptions.booking.BookingForbiddenException;
 import com.beachg.backend.exceptions.booking.UnitNotAvailableException;
 import com.beachg.backend.models.*;
 import com.beachg.backend.repositories.BookingRepository;
@@ -200,6 +201,20 @@ public class BookingService {
     public BookingResponse cancelBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+        booking.setStatus(Status.CANCELED);
+        bookingRepository.save(booking);
+        return mapToBookingResponse(booking);
+    }
+
+    public BookingResponse cancelBookingAsClient(Long bookingId, String clientEmail) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+        if (booking.getClient() == null || !booking.getClient().getEmail().equals(clientEmail)) {
+            throw new BookingForbiddenException("No tenés permiso para cancelar esta reserva");
+        }
+        if (booking.getStatus() == Status.CANCELED) {
+            throw new RuntimeException("La reserva ya está cancelada");
+        }
         booking.setStatus(Status.CANCELED);
         bookingRepository.save(booking);
         return mapToBookingResponse(booking);

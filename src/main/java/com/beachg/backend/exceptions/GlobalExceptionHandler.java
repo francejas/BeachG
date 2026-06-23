@@ -3,6 +3,7 @@ package com.beachg.backend.exceptions;
 import com.beachg.backend.exceptions.amenity.AmenityNotFoundException;
 import com.beachg.backend.exceptions.amenity.InvalidAmenityException;
 import com.beachg.backend.exceptions.auth.InvalidCredentialsException;
+import com.beachg.backend.exceptions.booking.BookingForbiddenException;
 import com.beachg.backend.exceptions.booking.UnitNotAvailableException;
 import com.beachg.backend.exceptions.client.ClientInvalidRegisterException;
 import com.beachg.backend.exceptions.client.ClientNotFoundException;
@@ -42,6 +43,12 @@ public class GlobalExceptionHandler {
     })
     public ResponseEntity<Map<String, String>> handleBadRequest(RuntimeException ex) {
         return ResponseEntity.badRequest()
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(BookingForbiddenException.class)
+    public ResponseEntity<Map<String, String>> handleForbidden(BookingForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Map.of("error", ex.getMessage()));
     }
 
