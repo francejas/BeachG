@@ -12,4 +12,6 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     // "SELECT * FROM client WHERE email = ?" solo con leer el nombre de este metodoo
     Optional<Client> findByEmail(String email);
 
+    Optional<Client> findByPhone(String phone);
+
 }

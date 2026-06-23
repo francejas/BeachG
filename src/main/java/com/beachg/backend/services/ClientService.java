@@ -36,7 +36,10 @@ public class ClientService {
 
     public ClientResponse registerClient(ClientRequest request) {
         if (clientRepository.findByEmail(request.email()).isPresent()) {
-            throw new ClientInvalidRegisterException("Client already exists");
+            throw new ClientInvalidRegisterException("El email ya está registrado");
+        }
+        if (clientRepository.findByPhone(request.phone()).isPresent()) {
+            throw new ClientInvalidRegisterException("El número de teléfono ya está registrado");
         }
 
         Client client = new Client();
