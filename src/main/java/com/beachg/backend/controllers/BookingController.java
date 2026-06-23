@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -93,11 +94,15 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getBookingById(id));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}/cancel")
-    @Operation(summary = "Cancelar reserva (Admin)")
-    public ResponseEntity<BookingResponse> cancelBooking(@PathVariable Long id) {
-        return ResponseEntity.ok(bookingService.cancelBooking(id));
+    @Operation(summary = "Cancelar reserva (Admin o cliente dueño)")
+    public ResponseEntity<BookingResponse> cancelBooking(@PathVariable Long id, Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (isAdmin) {
+            return ResponseEntity.ok(bookingService.cancelBooking(id));
+        }
+        return ResponseEntity.ok(bookingService.cancelBookingAsClient(id, authentication.getName()));
     }
 
     // ── Callbacks MercadoPago ────────────────────────────────────────────────
