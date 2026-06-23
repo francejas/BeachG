@@ -166,25 +166,31 @@ https://germicide-moistness-overhead.ngrok-free.dev/swagger-ui/index.html
 |---|---|---|---|
 | `POST` | `/api/auth/login` | — | Obtener JWT |
 | `POST` | `/api/clients` | — | Registrar cliente |
-| `GET` | `/api/resorts` | — | Listar balnearios |
+| `GET` | `/api/clients/{id}` | AUTH | Perfil del cliente |
+| `PUT` | `/api/clients/{id}` | AUTH | Actualizar perfil |
+| `GET` | `/api/resorts` | — | Listar balnearios activos |
 | `GET` | `/api/resorts/{id}` | — | Detalle + unidades del balneario |
 | `GET` | `/api/resorts/my` | ADMIN | Mi balneario |
 | `PUT` | `/api/resorts/my` | ADMIN | Actualizar datos del balneario |
-| `GET` | `/api/resorts/{id}/amenities` | — | Amenidades del balneario |
-| `POST` | `/api/bookings` | USER | Crear reserva (flujo MercadoPago) |
+| `POST` | `/api/resorts` | ADMIN | Crear balneario |
+| `PUT` | `/api/resorts/{id}` | ADMIN | Actualizar balneario por ID |
+| `PUT` | `/api/resorts/{id}/inactive` | ADMIN | Desactivar balneario |
+| `PUT` | `/api/resorts/{id}/active` | ADMIN | Activar balneario |
+| `POST` | `/api/bookings` | AUTH | Crear reserva (flujo MercadoPago) |
+| `POST` | `/api/bookings/{id}/pay` | AUTH | Reintentar pago (reserva PENDING) |
 | `POST` | `/api/bookings/walkin` | ADMIN | Reserva presencial instantánea |
 | `GET` | `/api/bookings` | ADMIN | Todas las reservas |
 | `GET` | `/api/bookings/{id}` | AUTH | Detalle de reserva |
 | `GET` | `/api/bookings/client/{id}` | AUTH | Reservas de un cliente |
 | `PATCH` | `/api/bookings/{id}/cancel` | ADMIN | Cancelar reserva |
 | `GET` | `/api/bookings/success` | — | Callback pago exitoso (MercadoPago) |
+| `GET` | `/api/bookings/pending` | — | Callback pago pendiente (MercadoPago) |
+| `GET` | `/api/bookings/failure` | — | Callback pago fallido (MercadoPago) |
 | `POST` | `/api/rental-units` | ADMIN | Crear unidad |
 | `PATCH` | `/api/rental-units/{id}/price` | ADMIN | Actualizar precio |
 | `PATCH` | `/api/rental-units/{id}/block` | ADMIN | Bloquear / desbloquear |
 | `POST` | `/api/guests/validate/{token}` | — | Validar QR |
 | `POST` | `/api/guests/validate/dni/{dni}` | — | Validar por DNI |
-| `GET` | `/api/clients/{id}` | AUTH | Perfil del cliente |
-| `PUT` | `/api/clients/{id}` | AUTH | Actualizar perfil |
 
 ### Autenticación
 
@@ -209,7 +215,6 @@ El JWT se obtiene con `POST /api/auth/login` y lleva el rol (`USER` o `ADMIN`) e
 ```bash
 git clone https://github.com/francejas/BeachG.git
 cd BeachG
-git checkout develop
 ```
 
 ### 2. Configurar variables de entorno
@@ -233,7 +238,7 @@ JWT_SECRET=tu_clave_secreta_muy_larga_aqui
 ### 3. Levantar el backend con Docker
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 Levanta:
@@ -243,7 +248,7 @@ Levanta:
 Para recargar datos de seed sin reconstruir la imagen:
 
 ```bash
-docker-compose up --build -d backend
+docker compose up --build -d backend
 ```
 
 ### 4. Levantar el frontend
