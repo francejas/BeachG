@@ -1,3 +1,4 @@
+Copia de BeachG (Documentacion).md
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -37,3 +38,6 @@ build/
 
 ### Environment ###
 .env
+
+### Claude Code Context ###
+CLAUDE.md
