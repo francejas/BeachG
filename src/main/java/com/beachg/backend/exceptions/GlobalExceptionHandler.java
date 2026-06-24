@@ -7,6 +7,7 @@ import com.beachg.backend.exceptions.booking.BookingForbiddenException;
 import com.beachg.backend.exceptions.booking.UnitNotAvailableException;
 import com.beachg.backend.exceptions.client.ClientInvalidRegisterException;
 import com.beachg.backend.exceptions.client.ClientNotFoundException;
+import com.beachg.backend.exceptions.guest.BookingNotInValidPeriodException;
 import com.beachg.backend.exceptions.guest.BookingNotPaidException;
 import com.beachg.backend.exceptions.guest.GuestAlreadyEnteredException;
 import com.beachg.backend.exceptions.guest.GuestNotFoundException;
@@ -37,6 +38,7 @@ public class GlobalExceptionHandler {
             UnitNotAvailableException.class,
             InvalidAmenityException.class,
             BookingNotPaidException.class,
+            BookingNotInValidPeriodException.class,
             GuestAlreadyEnteredException.class,
             ClientInvalidRegisterException.class,
             ResortInvalidRegisterException.class

@@ -74,6 +74,7 @@ export default function AdminBookingDetailPage() {
               <Card key={g.idGuest} className="flex items-center justify-between p-4">
                 <div>
                   <p className="font-semibold">{g.fullName}</p>
+                  <p className="text-sm text-muted-foreground">{g.dni ? `DNI ${g.dni}` : "Sin DNI"}</p>
                   <p className="font-mono text-xs text-muted-foreground">{g.qrToken}</p>
                 </div>
                 <div className="flex items-center gap-1.5 text-sm font-medium">

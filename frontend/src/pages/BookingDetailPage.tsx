@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { ArrowLeft, CalendarDays, Clock, CreditCard, ExternalLink, MapPin, Printer, QrCode, XCircle } from "lucide-react"
+import { ArrowLeft, CalendarDays, Clock, CreditCard, ExternalLink, MapPin, Printer, QrCode, Users, XCircle } from "lucide-react"
 import { useBooking, useCancelBooking, useRetryPayment } from "@/lib/queries"
 import { getApiErrorMessage } from "@/lib/api"
 import { Button, Card, ErrorState, Loading, StatusBadge } from "@/components/ui"
@@ -140,6 +140,30 @@ export function BookingDetailPage() {
             {booking.walkInDni ? ` · DNI ${booking.walkInDni}` : ""}
           </p>
         </Card>
+      )}
+
+      {(booking.guests ?? []).length > 0 && (
+        <section className="mt-8">
+          <h2 className="mb-3 flex items-center gap-2 text-xl font-bold">
+            <Users className="h-5 w-5 text-primary" /> Personas de la reserva
+            <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+              {booking.guests!.length}
+            </span>
+          </h2>
+          <div className="space-y-2">
+            {booking.guests!.map((g) => (
+              <Card key={g.idGuest} className="flex items-center justify-between p-4">
+                <div>
+                  <p className="font-semibold">{g.fullName}</p>
+                  <p className="text-sm text-muted-foreground">{g.dni ? `DNI ${g.dni}` : "Sin DNI"}</p>
+                </div>
+                {g.isEntryValidated && (
+                  <span className="text-sm font-medium text-success">Ingresó</span>
+                )}
+              </Card>
+            ))}
+          </div>
+        </section>
       )}
 
       <section className="mt-8">

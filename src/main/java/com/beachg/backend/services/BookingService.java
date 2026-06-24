@@ -100,7 +100,7 @@ public class BookingService {
 
         // Mapeo de la respuesta final al DTO
         List<GuestSummaryResponse> guestResponses = invitadosGuardados.stream()
-                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated(), g.getQrToken()))
+                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getDni(), g.getIsEntryValidated(), g.getQrToken()))
                 .toList();
 
         var resort = rentalUnit.getResort();
@@ -178,7 +178,7 @@ public class BookingService {
     private BookingResponse mapToBookingResponse(Booking booking) {
         List<GuestSummaryResponse> guestResponses = booking.getGuests() != null ?
                 booking.getGuests().stream()
-                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getIsEntryValidated(), g.getQrToken()))
+                .map(g -> new GuestSummaryResponse(g.getIdGuest(), g.getFullName(), g.getDni(), g.getIsEntryValidated(), g.getQrToken()))
                 .toList() : new ArrayList<>();
 
         var resort = booking.getRentalUnit().getResort();

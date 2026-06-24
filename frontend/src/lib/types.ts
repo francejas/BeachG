@@ -28,6 +28,7 @@ export interface Resort {
 export interface GuestSummary {
   idGuest: number
   fullName: string
+  dni?: string | null
   isEntryValidated: boolean
   qrToken: string
 }
