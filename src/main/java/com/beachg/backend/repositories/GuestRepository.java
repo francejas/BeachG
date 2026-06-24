@@ -14,6 +14,6 @@ public interface GuestRepository extends JpaRepository<Guest, Long> {
 
     Optional<Guest> findByQrToken(String qrToken);
 
-    @Query("SELECT g FROM Guest g WHERE g.booking.walkInDni = :dni AND g.booking.status = 'CONFIRMED'")
-    List<Guest> findByWalkInDni(@Param("dni") String dni);
+    @Query("SELECT g FROM Guest g WHERE (g.dni = :dni OR g.booking.walkInDni = :dni) AND g.booking.status = 'CONFIRMED'")
+    List<Guest> findConfirmedByDni(@Param("dni") String dni);
 }

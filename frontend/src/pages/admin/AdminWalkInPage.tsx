@@ -12,7 +12,7 @@ export default function AdminWalkInPage() {
 
   const [walkInName, setWalkInName] = useState("")
   const [walkInDni, setWalkInDni] = useState("")
-  const [companions, setCompanions] = useState<string[]>([])
+  const [companions, setCompanions] = useState<{ fullName: string; dni: string }[]>([])
   const [rentalUnitId, setRentalUnitId] = useState("")
   const [startDate, setStartDate] = useState(todayISO())
   const [endDate, setEndDate] = useState(addDaysISO(todayISO(), 1))
@@ -24,11 +24,11 @@ export default function AdminWalkInPage() {
   const availableUnits = units?.filter((u) => !u.isBlocked) ?? []
 
   function addCompanion() {
-    setCompanions((c) => [...c, ""])
+    setCompanions((c) => [...c, { fullName: "", dni: "" }])
   }
 
-  function updateCompanion(i: number, value: string) {
-    setCompanions((c) => c.map((n, idx) => (idx === i ? value : n)))
+  function updateCompanion(i: number, field: "fullName" | "dni", value: string) {
+    setCompanions((c) => c.map((comp, idx) => (idx === i ? { ...comp, [field]: value } : comp)))
   }
 
   function removeCompanion(i: number) {
@@ -40,14 +40,21 @@ export default function AdminWalkInPage() {
     setError(null)
     setDone(null)
     if (!resort) return
-    const allGuests = [walkInName, ...companions.map((n) => n.trim()).filter(Boolean)]
+    const cleanCompanions = companions
+      .map((c) => ({ fullName: c.fullName.trim(), dni: c.dni.trim() }))
+      .filter((c) => c.fullName)
+    if (cleanCompanions.some((c) => !c.dni)) {
+      setError("Ingresá el DNI de cada acompañante.")
+      return
+    }
+    const allGuests = [{ fullName: walkInName.trim(), dni: walkInDni.trim() }, ...cleanCompanions]
     try {
       const res = await createWalkIn.mutateAsync({
         startDate,
         endDate,
         clientId: 0,
         rentalUnitId: Number(rentalUnitId),
-        guestNames: allGuests,
+        guests: allGuests,
         walkInName,
         walkInDni,
         isWalkIn: true,
@@ -95,12 +102,21 @@ export default function AdminWalkInPage() {
                 Acompañantes <span className="font-normal normal-case">(opcional)</span>
               </p>
               <div className="space-y-2">
-                {companions.map((name, i) => (
+                {companions.map((comp, i) => (
                   <div key={i} className="flex gap-2">
                     <Input
+                      className="flex-1"
                       placeholder={`Acompañante ${i + 1}`}
-                      value={name}
-                      onChange={(e) => updateCompanion(i, e.target.value)}
+                      value={comp.fullName}
+                      onChange={(e) => updateCompanion(i, "fullName", e.target.value)}
+                    />
+                    <Input
+                      className="w-32"
+                      inputMode="numeric"
+                      maxLength={8}
+                      placeholder="DNI"
+                      value={comp.dni}
+                      onChange={(e) => updateCompanion(i, "dni", e.target.value.replace(/\D/g, ""))}
                     />
                     <Button
                       type="button"

@@ -8,7 +8,7 @@ public record BookingRequest(
         LocalDate endDate,
         Long clientId, // En caso presencial será el ID del "Cliente Mostrador"
         Long rentalUnitId,
-        List<String> guestNames,
+        List<GuestRequest> guests,
         String walkInName, // <-- Nuevo campo opcional
         String walkInDni,   // <-- Nuevo campo opcional
         Boolean isWalkIn   // <--- NUEVO CAMPO QUE MANDA EL FRONTEND

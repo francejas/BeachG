@@ -47,7 +47,7 @@ public class GuestService {
 
     @Transactional
     public GuestValidationResponse validateGuestEntryByDni(String dni) {
-        List<Guest> guests = guestRepository.findByWalkInDni(dni);
+        List<Guest> guests = guestRepository.findConfirmedByDni(dni);
 
         if (guests.isEmpty()) {
             throw new GuestNotFoundException("No se encontró una reserva confirmada con el DNI ingresado.");

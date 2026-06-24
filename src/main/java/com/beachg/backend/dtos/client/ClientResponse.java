@@ -11,6 +11,7 @@ public record ClientResponse(
         String lastName,
         String email,
         String phone,
+        String dni,
         List<BookingSummaryResponse> bookings //lista anidada segura
 ) {
 }

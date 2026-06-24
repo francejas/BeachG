@@ -78,16 +78,19 @@ public class BookingService {
         if (client != null) {
             Guest clientGuest = new Guest();
             clientGuest.setFullName(client.getFirstName() + " " + client.getLastName());
+            clientGuest.setDni(client.getDni());
             clientGuest.setQrToken(UUID.randomUUID().toString());
             clientGuest.setIsEntryValidated(false);
             clientGuest.setBooking(savedBooking);
             invitadosGuardados.add(guestRepository.save(clientGuest));
         }
 
-        if (request.guestNames() != null && !request.guestNames().isEmpty()) {
-            for (String guestName : request.guestNames()) {
+        if (request.guests() != null && !request.guests().isEmpty()) {
+            for (var guestReq : request.guests()) {
+                if (guestReq.fullName() == null || guestReq.fullName().isBlank()) continue;
                 Guest guest = new Guest();
-                guest.setFullName(guestName);
+                guest.setFullName(guestReq.fullName());
+                guest.setDni(guestReq.dni());
                 guest.setQrToken(UUID.randomUUID().toString());
                 guest.setIsEntryValidated(false);
                 guest.setBooking(savedBooking);
@@ -161,6 +164,7 @@ public class BookingService {
             Client client = booking.getClient();
             Guest guest = new Guest();
             guest.setFullName(client.getFirstName() + " " + client.getLastName());
+            guest.setDni(client.getDni());
             guest.setQrToken(UUID.randomUUID().toString());
             guest.setIsEntryValidated(false);
             guest.setBooking(booking);
@@ -232,6 +236,7 @@ public class BookingService {
             Client client = booking.getClient();
             Guest guest = new Guest();
             guest.setFullName(client.getFirstName() + " " + client.getLastName());
+            guest.setDni(client.getDni());
             guest.setQrToken(UUID.randomUUID().toString());
             guest.setIsEntryValidated(false);
             guest.setBooking(booking);

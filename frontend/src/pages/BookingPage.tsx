@@ -19,7 +19,7 @@ export function BookingPage() {
   const [rentalUnitId, setRentalUnitId] = useState<number | "">("")
   const [startDate, setStartDate] = useState(todayISO())
   const [endDate, setEndDate] = useState(addDaysISO(todayISO(), 1))
-  const [guestNames, setGuestNames] = useState<string[]>([])
+  const [guests, setGuests] = useState<{ fullName: string; dni: string }[]>([])
   const [submitError, setSubmitError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -57,8 +57,8 @@ export function BookingPage() {
     setRentalUnitId("")
   }
 
-  function updateGuest(i: number, value: string) {
-    setGuestNames((g) => g.map((n, idx) => (idx === i ? value : n)))
+  function updateGuest(i: number, field: "fullName" | "dni", value: string) {
+    setGuests((g) => g.map((guest, idx) => (idx === i ? { ...guest, [field]: value } : guest)))
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -67,7 +67,10 @@ export function BookingPage() {
 
     if (!rentalUnitId) return setSubmitError("Elegí una unidad disponible.")
     if (endDate < startDate) return setSubmitError("La fecha de salida debe ser posterior a la de entrada.")
-    const names = guestNames.map((n) => n.trim()).filter(Boolean)
+    const cleanGuests = guests
+      .map((g) => ({ fullName: g.fullName.trim(), dni: g.dni.trim() }))
+      .filter((g) => g.fullName)
+    if (cleanGuests.some((g) => !g.dni)) return setSubmitError("Ingresá el DNI de cada huésped.")
 
     try {
       const result = await createBooking.mutateAsync({
@@ -75,7 +78,7 @@ export function BookingPage() {
         endDate,
         clientId: clientId!,
         rentalUnitId: Number(rentalUnitId),
-        guestNames: names,
+        guests: cleanGuests,
       })
       if (result.paymentUrl) {
         window.open(result.paymentUrl, "_blank", "noopener,noreferrer")
@@ -173,18 +176,31 @@ export function BookingPage() {
             <h2 className="mb-4 flex items-center gap-2 font-bold">
               <Users className="h-5 w-5 text-primary" /> Huéspedes <span className="text-sm font-normal text-muted-foreground">(opcional)</span>
             </h2>
-            <p className="mb-3 text-sm text-muted-foreground">Cada huésped recibirá su propio código QR de ingreso.</p>
+            <p className="mb-3 text-sm text-muted-foreground">Cada huésped recibirá su propio código QR de ingreso y podrá validar la entrada con su DNI.</p>
             <div className="space-y-2">
-              {guestNames.map((name, i) => (
+              {guests.map((guest, i) => (
                 <div key={i} className="flex gap-2">
-                  <Input placeholder={`Nombre del huésped ${i + 1}`} value={name} onChange={(e) => updateGuest(i, e.target.value)} />
-                  <Button type="button" variant="outline" size="icon" onClick={() => setGuestNames((g) => g.filter((_, idx) => idx !== i))} aria-label="Quitar huésped">
+                  <Input
+                    className="flex-1"
+                    placeholder={`Nombre del huésped ${i + 1}`}
+                    value={guest.fullName}
+                    onChange={(e) => updateGuest(i, "fullName", e.target.value)}
+                  />
+                  <Input
+                    className="w-32"
+                    inputMode="numeric"
+                    maxLength={8}
+                    placeholder="DNI"
+                    value={guest.dni}
+                    onChange={(e) => updateGuest(i, "dni", e.target.value.replace(/\D/g, ""))}
+                  />
+                  <Button type="button" variant="outline" size="icon" onClick={() => setGuests((g) => g.filter((_, idx) => idx !== i))} aria-label="Quitar huésped">
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               ))}
             </div>
-            <Button type="button" variant="ghost" size="sm" className="mt-3" onClick={() => setGuestNames((g) => [...g, ""])}>
+            <Button type="button" variant="ghost" size="sm" className="mt-3" onClick={() => setGuests((g) => [...g, { fullName: "", dni: "" }])}>
               <Plus className="h-4 w-4" /> Agregar huésped
             </Button>
           </Card>

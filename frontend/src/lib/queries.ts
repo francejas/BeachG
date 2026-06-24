@@ -170,6 +170,7 @@ export function useUpdateClient() {
       lastName,
       email,
       phone,
+      dni,
       password,
     }: {
       id: number
@@ -177,8 +178,9 @@ export function useUpdateClient() {
       lastName: string
       email: string
       phone: string
+      dni?: string
       password?: string
-    }) => (await api.put<Client>(`/api/clients/${id}`, { firstName, lastName, email, phone, password: password ?? null })).data,
+    }) => (await api.put<Client>(`/api/clients/${id}`, { firstName, lastName, email, phone, dni: dni ?? null, password: password ?? null })).data,
     onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: ["client", vars.id] })
     },

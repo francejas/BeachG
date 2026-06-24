@@ -23,6 +23,9 @@ public class Client {
 
     private String phone;
 
+    @Column(unique = true)
+    private String dni;
+
     @Column(nullable = false)
     private String role = "USER";  // "USER" o "ADMIN"
 

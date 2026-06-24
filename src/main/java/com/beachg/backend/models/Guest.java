@@ -14,6 +14,8 @@ public class Guest {
     //cambiar a firstname y lastname
     private String fullName;
 
+    private String dni;
+
     @Column(unique = true)
     private String qrToken;
 

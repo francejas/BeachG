@@ -5,6 +5,7 @@ public record ClientRequest(
         String lastName,
         String email,
         String password,
-        String phone
+        String phone,
+        String dni
 ) {
 }

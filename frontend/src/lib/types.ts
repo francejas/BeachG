@@ -65,6 +65,7 @@ export interface Client {
   lastName: string
   email: string
   phone: string
+  dni: string
   bookings: BookingSummary[]
 }
 
@@ -80,12 +81,17 @@ export interface GuestValidationResponse {
   message: string
 }
 
+export interface GuestInput {
+  fullName: string
+  dni: string
+}
+
 export interface CreateBookingPayload {
   startDate: string
   endDate: string
   clientId: number
   rentalUnitId: number
-  guestNames: string[]
+  guests: GuestInput[]
   walkInName?: string
   walkInDni?: string
   isWalkIn?: boolean

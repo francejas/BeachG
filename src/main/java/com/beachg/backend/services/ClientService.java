@@ -41,6 +41,9 @@ public class ClientService {
         if (clientRepository.findByPhone(request.phone()).isPresent()) {
             throw new ClientInvalidRegisterException("El número de teléfono ya está registrado");
         }
+        if (request.dni() != null && clientRepository.findByDni(request.dni()).isPresent()) {
+            throw new ClientInvalidRegisterException("El DNI ya está registrado");
+        }
 
         Client client = new Client();
         client.setFirstName(request.firstName());
@@ -48,6 +51,7 @@ public class ClientService {
         client.setEmail(request.email());
         client.setPasswordHash(passwordEncoder.encode(request.password()));
         client.setPhone(request.phone());
+        client.setDni(request.dni());
 
         // TODO: Fijarse lista de reservas (bookings) como setearla. Default: null
         //client.setBookings(null);
@@ -66,6 +70,9 @@ public class ClientService {
             saved.setPasswordHash(passwordEncoder.encode(request.password()));
         }
         saved.setPhone(request.phone());
+        if (request.dni() != null && !request.dni().isBlank()) {
+            saved.setDni(request.dni());
+        }
 
         return mapToResponse(clientRepository.save(saved));
     }
@@ -90,6 +97,7 @@ public class ClientService {
                 client.getLastName(),
                 client.getEmail(),
                 client.getPhone(),
+                client.getDni(),
                 bookingSummaries
         );
     }

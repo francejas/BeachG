@@ -10,7 +10,7 @@ export function RegisterPage() {
   const location = useLocation()
   const from = (location.state as { from?: string } | null)?.from
   const { login } = useAuth()
-  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", password: "" })
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", dni: "", password: "" })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -53,6 +53,18 @@ export function RegisterPage() {
         <div>
           <Label htmlFor="phone">Teléfono</Label>
           <Input id="phone" type="tel" required value={form.phone} onChange={update("phone")} placeholder="2235551234" />
+        </div>
+        <div>
+          <Label htmlFor="dni">DNI</Label>
+          <Input
+            id="dni"
+            inputMode="numeric"
+            required
+            value={form.dni}
+            onChange={(e) => setForm((f) => ({ ...f, dni: e.target.value.replace(/\D/g, "") }))}
+            placeholder="40123456"
+            maxLength={8}
+          />
         </div>
         <div>
           <Label htmlFor="password">Contraseña</Label>

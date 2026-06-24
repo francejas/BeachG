@@ -15,6 +15,7 @@ export function ProfilePage() {
   const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
+  const [dni, setDni] = useState("")
   const [profileMsg, setProfileMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null)
 
   // Password form state
@@ -28,6 +29,7 @@ export function ProfilePage() {
       setLastName(client.lastName ?? "")
       setEmail(client.email ?? "")
       setPhone(client.phone ?? "")
+      setDni(client.dni ?? "")
     }
   }, [client])
 
@@ -35,7 +37,7 @@ export function ProfilePage() {
     e.preventDefault()
     setProfileMsg(null)
     try {
-      await updateClient.mutateAsync({ id: clientId!, firstName, lastName, email, phone })
+      await updateClient.mutateAsync({ id: clientId!, firstName, lastName, email, phone, dni })
       setProfileMsg({ type: "ok", text: "Datos actualizados correctamente." })
     } catch (err) {
       setProfileMsg({ type: "err", text: getApiErrorMessage(err, "No se pudo actualizar el perfil.") })
@@ -60,6 +62,7 @@ export function ProfilePage() {
         lastName: client?.lastName ?? lastName,
         email: client?.email ?? email,
         phone: client?.phone ?? phone,
+        dni: client?.dni ?? dni,
         password: newPassword,
       })
       setNewPassword("")
@@ -103,6 +106,17 @@ export function ProfilePage() {
           <div>
             <Label htmlFor="phone">Teléfono</Label>
             <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+54 9 11 1234-5678" />
+          </div>
+          <div>
+            <Label htmlFor="dni">DNI</Label>
+            <Input
+              id="dni"
+              inputMode="numeric"
+              maxLength={8}
+              value={dni}
+              onChange={(e) => setDni(e.target.value.replace(/\D/g, ""))}
+              placeholder="40123456"
+            />
           </div>
           {profileMsg && (
             <p className={`rounded-lg px-3 py-2 text-sm ${profileMsg.type === "ok" ? "bg-green-100 text-green-700" : "bg-destructive/10 text-destructive"}`}>

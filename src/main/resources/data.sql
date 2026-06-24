@@ -505,3 +505,17 @@ INSERT INTO guest (id_guest, full_name, qr_token, is_entry_validated, id_booking
 (66, 'Valentina García',     'tok-00045-A1-VAL4',  false, 45),
 (67, 'Tomás García',         'tok-00045-A2-TOM3',  false, 45),
 (68, 'Lucía García',         'tok-00045-A3-LUC2',  false, 45);
+
+-- =============================================================================
+-- BACKFILL DNI — permite validar el ingreso por DNI (además del QR/token)
+-- =============================================================================
+-- Cada cliente regular recibe un DNI demo único (formato 40XXXXXX).
+UPDATE client SET dni = CONCAT('40', LPAD(id_client, 6, '0'))
+WHERE role = 'USER' AND id_client > 1;
+
+-- El huésped titular hereda el DNI de su cliente (coincide el nombre completo).
+UPDATE guest g
+JOIN booking b ON g.id_booking = b.id
+JOIN client c ON b.id_client = c.id_client
+SET g.dni = c.dni
+WHERE g.full_name = CONCAT(c.first_name, ' ', c.last_name) AND c.dni IS NOT NULL;
