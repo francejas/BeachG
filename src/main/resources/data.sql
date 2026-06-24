@@ -519,3 +519,18 @@ JOIN booking b ON g.id_booking = b.id
 JOIN client c ON b.id_client = c.id_client
 SET g.dni = c.dni
 WHERE g.full_name = CONCAT(c.first_name, ' ', c.last_name) AND c.dni IS NOT NULL;
+
+-- =============================================================================
+-- FECHAS RELATIVAS — mantiene reservas "actuales" vigentes el día de la demo.
+-- El gate de validación de ingreso exige inicio <= hoy <= fin (ver GuestService),
+-- así que las reservas demo se anclan a CURDATE() para no vencerse con el tiempo.
+-- =============================================================================
+-- Reservas confirmadas vigentes hoy (una por balneario): permiten validar QR/DNI.
+UPDATE booking SET start_date = CURDATE() - INTERVAL 1 DAY,
+                   end_date   = CURDATE() + INTERVAL 4 DAY
+WHERE id IN (12, 24, 32, 39, 45);
+
+-- Walk-ins presenciales vigentes hoy.
+UPDATE booking SET start_date = CURDATE(),
+                   end_date   = CURDATE() + INTERVAL 1 DAY
+WHERE id IN (13, 25);
